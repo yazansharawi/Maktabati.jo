@@ -1,51 +1,99 @@
 <template>
-  <div class="nav-container" >
-    <div class="NavHeader">Maktabti.jo</div>
-    <div class="NavElements">
-      <a href="">Home</a>
-      <a href="">Shop</a>
-      <a href="">Categories</a>
-      <a href="">Community</a>
-      <a href="">WishList</a>
-      {{screenWidth}}
-    </div>
-    <div class="NavRight">
-      <v-text-field
-        class="nav-search-field"
-        placeholder="Book Name"
-        clearable
-        variant="underlined"
-        dense
-        full-width
-        hide-details
-        single-line
-        outlined
-        background-color="white"
-      >
-        <v-icon size="1.2rem" class="mt-1 mr-2" color="#3C3C43">mdi-magnify</v-icon>
-      </v-text-field>
-    </div>
-          <div class="red-div"></div>
+  <div class="nav-container">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <div class="NavHeader">Maktabti.jo</div>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse NavElements"
+          id="navbarSupportedContent"
+        >
+         <v-text-field
+            class="nav-search-field"
+            placeholder="Book Name"
+            clearable
+            variant="underlined"
+            dense
+            full-width
+            hide-details
+            single-line
+            outlined
+          >
+            <v-icon size="1.2rem" class="mt-1 mr-2" color="#3C3C43"
+              >mdi-magnify</v-icon
+            >
+          </v-text-field>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item" v-for="item in navItems" :key="item.id">
+              <a class="nav-link" :href="item.link">{{ item.label }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="red-div"><div class="white-circle"></div></div>
+      <div class="right-angle-triangle"></div>
+      <div class="left-angle-triangle"></div>
+    </nav>
   </div>
 </template>
 
 <script>
 export default {
   name: "NavBar",
-};
+  data() {
+    return {
+      isMobile: false,
+    };
+  },
+  computed: {
+    navItems() {
+      let items = [
+        { id: 1, label: "Home", link: "" },
+        { id: 2, label: "Shop", link: "" },
+        { id: 3, label: "Categories", link: "" },
+        { id: 4, label: "Community", link: "" },
+        { id: 5, label: "WishList", link: "" },
+      ];
 
+      if (this.isMobile) {
+        items.push({ id: 6, label: "User Settings", link: "" });
+      }
+
+      return items;
+    },
+  },
+  mounted() {
+    this.checkScreenSize();
+    window.addEventListener("resize", this.checkScreenSize);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.checkScreenSize);
+  },
+  methods: {
+    checkScreenSize() {
+      this.isMobile = window.innerWidth <= 992; 
+    },
+  },
+};
 </script>
 
 <style scoped>
 .nav-container {
-  background-color: #f3f0e9;
-  overflow: hidden;
-  display: flex;
+  background-color: #F3F0E9; 
 }
-
 .NavHeader {
+  margin: 10px;
   padding-right: 30px;
-  margin: 20px;
   font-size: 25px;
   font-family: "Times New Roman";
   color: #494949;
@@ -53,7 +101,7 @@ export default {
 }
 
 .NavElements {
-  margin-top: 25px;
+  color: #494949;
   padding-left: 10px;
   font-family: "Times New Roman";
   font-style: normal;
@@ -64,24 +112,70 @@ export default {
 .NavElements a {
   text-decoration: none;
   color: #494949;
-  padding-right: 35px;
-}
-
-.NavRight {
-  display: flex;
+  margin-right: 15px;
 }
 .nav-search-field {
+  margin-bottom: 10px;
+  top: 0px;
   position: absolute;
   right: 220px;
   width: 300px;
   height: 30px;
 }
 .red-div {
-  right:70px;
+  right: 70px;
   position: absolute;
-  width: 42px;
-  height: 106px;
-  background-color: #AE0000;
-  margin-left: 10px; /* Adjust the margin as needed */
+  width: 50px;
+  height: 90px;
+  background-color: #ae0000;
+  margin-left: 10px;
+}
+.right-angle-triangle {
+  margin-top: 130px;
+  position: absolute;
+  right: 70px;
+  border-width: 0 25px 40px 0;
+  border-style: solid;
+  border-color: transparent #ae0000 transparent transparent;
+}
+.left-angle-triangle {
+  margin-top: 130px;
+  position: absolute;
+  right: 95px;
+  border-width: 40px 25px 0 0;
+  border-style: solid;
+  border-color: #ae0000 transparent transparent transparent;
+}
+.white-circle {
+  width: 40px;
+  height: 40px; 
+  background-color: white;
+  border-radius: 20px; 
+  margin: 20px auto;
+}
+@media (max-width: 992px) {
+  .red-div,
+  .right-angle-triangle,
+  .left-angle-triangle {
+    display: none;
+  }
+ .nav-search-field {
+    position: static; 
+    margin-bottom: 40px;
+    width: 90%; 
+  }
+   .NavElements a {
+    padding-right: 0; /* Remove right padding */
+    margin-bottom: 5px; /* Add spacing between anchors */
+  }
+
+.NavElements {
+  color: #494949;
+  padding-left: 10px;
+  font-family: "Times New Roman";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+}
 }
 </style>

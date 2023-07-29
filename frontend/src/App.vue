@@ -1,11 +1,7 @@
 <template>
-  <v-app>
-    <v-main>
       <div>
       <HomePage />
       </div>
-    </v-main>
-  </v-app>
 </template>
 
 <script>
@@ -23,5 +19,8 @@ export default {
 <style scoped>
 div{
   background-color: #f3f0e9;
+}
+body {
+ font-family: 'Times New Roman';
 }
 </style>

@@ -1,26 +1,24 @@
 <template>
       <div>
-      <HomePage />
+      <!-- <HomePage /> -->
+      <GetToKnowTheUser/>
       </div>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-import HomePage from "./components/home-page.vue";
-
+// import HomePage from "./components/home-page.vue";
+import GetToKnowTheUser from './components/User-presona.vue'
 export default {
   name: "App",
 
   components: {
-    HomePage,
+    GetToKnowTheUser
   },
 };
 </script>
-<style scoped>
+<style>
 div{
-  background-color: #f3f0e9;
-}
-body {
- font-family: 'Times New Roman';
+  font-family: "Times New Roman";
 }
 </style>

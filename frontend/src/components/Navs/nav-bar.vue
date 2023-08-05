@@ -2,8 +2,16 @@
   <div class="nav-container">
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
-        <div class="NavHeader">Maktabti.jo</div>
+        <div
+          :class="{
+            NavHeader: !isGetUserPage,
+            'NavHeader centered-header': isGetUserPage,
+          }"
+        >
+          Maktabti.jo
+        </div>
         <button
+          v-if="!isGetUserPage"
           class="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -15,10 +23,11 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div
+          v-if="!isGetUserPage"
           class="collapse navbar-collapse NavElements"
           id="navbarSupportedContent"
         >
-         <v-text-field
+          <v-text-field
             class="nav-search-field"
             placeholder="Book Name"
             clearable
@@ -40,7 +49,9 @@
           </ul>
         </div>
       </div>
-      <div class="red-div"><div class="white-circle"></div></div>
+      <div class="red-div">
+        <div class="white-circle" v-if="!isGetUserPage"></div>
+      </div>
       <div class="right-angle-triangle"></div>
       <div class="left-angle-triangle"></div>
     </nav>
@@ -54,6 +65,13 @@ export default {
     return {
       isMobile: false,
     };
+  },
+  props: {
+    isGetUserPage: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   computed: {
     navItems() {
@@ -81,7 +99,7 @@ export default {
   },
   methods: {
     checkScreenSize() {
-      this.isMobile = window.innerWidth <= 992; 
+      this.isMobile = window.innerWidth <= 992;
     },
   },
 };
@@ -89,7 +107,7 @@ export default {
 
 <style scoped>
 .nav-container {
-  background-color: #F3F0E9; 
+  background-color: #f3f0e9;
 }
 .NavHeader {
   margin: 10px;
@@ -148,34 +166,40 @@ export default {
 }
 .white-circle {
   width: 40px;
-  height: 40px; 
+  height: 40px;
   background-color: white;
-  border-radius: 20px; 
+  border-radius: 20px;
   margin: 20px auto;
 }
 @media (max-width: 992px) {
+  .centered-header {
+    padding-top: 70px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
   .red-div,
   .right-angle-triangle,
   .left-angle-triangle {
     display: none;
   }
- .nav-search-field {
-    position: static; 
+  .nav-search-field {
+    position: static;
     margin-bottom: 40px;
-    width: 90%; 
+    width: 90%;
   }
-   .NavElements a {
+  .NavElements a {
     padding-right: 0; /* Remove right padding */
     margin-bottom: 5px; /* Add spacing between anchors */
   }
 
-.NavElements {
-  color: #494949;
-  padding-left: 10px;
-  font-family: "Times New Roman";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 20px;
-}
+  .NavElements {
+    color: #494949;
+    padding-left: 10px;
+    font-family: "Times New Roman";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+  }
 }
 </style>

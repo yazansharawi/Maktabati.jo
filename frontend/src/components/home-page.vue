@@ -59,7 +59,7 @@
 
 <script>
 import Nav from "./Navs/nav-bar.vue";
-import Footer from "./footer.vue";
+import Footer from "./Footer/footer.vue";
 import BookLists from "./Books-list/Books-list.vue";
 import AboutAuthors from "./About-authors-list/Authors-list.vue"
 export default {

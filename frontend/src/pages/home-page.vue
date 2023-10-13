@@ -58,10 +58,10 @@
 </template>
 
 <script>
-import Nav from "./Navs/nav-bar.vue";
-import Footer from "./Footer/footer.vue";
-import BookLists from "./Books-list/Books-list.vue";
-import AboutAuthors from "./About-authors-list/Authors-list.vue"
+import Nav from "../components/Navs/nav-bar.vue";
+import Footer from "../components/Footer/footer.vue";
+import BookLists from "../components/Books-list/Books-list.vue";
+import AboutAuthors from "../components/About-authors-list/Authors-list.vue"
 export default {
   name: "HomePage",
   components: {

@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import Nav from "./Navs/nav-bar.vue";
+import Nav from "../components/Navs/nav-bar.vue";
 export default {
   name: "GetToKnowUser",
   components: {

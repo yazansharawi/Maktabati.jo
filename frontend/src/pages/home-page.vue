@@ -60,7 +60,7 @@
 <script>
 import Nav from "../components/Navs/main-navbar.vue";
 import Footer from "../components/Footer/footer.vue";
-import BookLists from "../components/Books-list/Books-list.vue";
+import BookLists from "../components/Book-components/Books-list.vue";
 import AboutAuthors from "../components/About-authors-list/Authors-list.vue"
 export default {
   name: "HomePage",

@@ -1,24 +1,26 @@
 <template>
+  <div>
     <v-row
-      style="
-        background: linear-gradient(to right, white 50%, #f3f0e9 50%);
-        height: auto;
-        padding: 40px;
-        padding-top: 30px;
-        padding-bottom: 10px;
-      "
+      :style="{
+        background: backgroundColor,
+        height: 'auto',
+        padding: '40px',
+        paddingTop: '30px',
+        paddingBottom: '10px',
+      }"
+      class="sectionName"
     >
       <div style="font-size: 50px; font-weight: bold; color: #494949">
-        In This Book
+        {{ sectionName }}
       </div>
     </v-row>
     <v-row
-      style="
-        background: linear-gradient(to right, white 50%, #f3f0e9 50%);
-        height: auto;
-        padding: 40px;
-        padding-top: 0px;
-      "
+      :style="{
+        background: backgroundColor,
+        height: 'auto',
+        padding: '40px',
+        paddingTop: '0px',
+      }"
     >
       <v-row cols="12" sm="6" style="padding: 0px">
         <v-col
@@ -78,26 +80,31 @@
         </v-col>
       </v-row>
     </v-row>
+  </div>
 </template>
-<script lang="ts">
-import Vue from "vue";
 
-export default Vue.extend({
-  name: "DivsSection",
-  props: {},
-  data() {
-    return {
-      // Add your data properties here
-    };
+<script>
+export default {
+  name: "DivSection",
+  props: {
+    sectionName: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    backgroundColor: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
-  watch: {
-    // Add your watch properties here
-  },
-  computed: {
-    // Add your computed properties here
-  },
-  methods: {
-    // Add your methods here
-  },
-});
+};
 </script>
+
+<style scoped>
+@media (max-width: 991.98px) {
+  .sectionName {
+    justify-content: center;
+  }
+}
+</style>

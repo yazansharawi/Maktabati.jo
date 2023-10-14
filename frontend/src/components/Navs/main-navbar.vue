@@ -189,8 +189,8 @@ export default {
     width: 90%;
   }
   .NavElements a {
-    padding-right: 0; /* Remove right padding */
-    margin-bottom: 5px; /* Add spacing between anchors */
+    padding-right: 0;
+    margin-bottom: 5px;
   }
 
   .NavElements {

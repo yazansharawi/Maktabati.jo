@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import Nav from "../components/Navs/nav-bar.vue";
+import Nav from "../components/Navs/main-navbar.vue";
 import Footer from "../components/Footer/footer.vue";
 import BookLists from "../components/Books-list/Books-list.vue";
 import AboutAuthors from "../components/About-authors-list/Authors-list.vue"

@@ -2,22 +2,25 @@
       <div>
       <!-- <HomePage /> -->
       <!-- <GetToKnowTheUser/> -->
-      <BookOverview/>
+      <!-- <BookOverview/> -->
+      <shopPage/>
       </div>
 </template>
 
 <script>
-import BookOverview from './pages/book-overview.vue';
+// import BookOverview from './pages/book-overview.vue';
 // import HelloWorld from './components/HelloWorld.vue'
 // import HomePage from "../src/pages/home-page.vue";
+import shopPage from './pages/shop-page.vue';
 // import GetToKnowTheUser from './components/User-presona.vue'
 export default {
   name: "App",
 
   components: {
-    BookOverview
+    // BookOverview
     // GetToKnowTheUser
-    // HomePage
+    // HomePage,
+    shopPage
   },
 };
 </script>

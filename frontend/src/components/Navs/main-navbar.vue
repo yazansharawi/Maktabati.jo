@@ -1,12 +1,16 @@
 <template>
   <div class="nav-container">
-    <nav class="navbar navbar-expand-lg">
+    <nav
+      class="navbar navbar-expand-lg"
+      :style="{ padding: isGetUserPage ? '0px' : '' }"
+    >
       <div class="container-fluid">
         <div
           :class="{
             NavHeader: !isGetUserPage,
             'NavHeader centered-header': isGetUserPage,
           }"
+            :style="{ 'font-size': isGetUserPage ? '40px' : '' }"
         >
           Maktabti.jo
         </div>
@@ -173,10 +177,11 @@ export default {
 }
 @media (max-width: 992px) {
   .centered-header {
-    padding-top: 70px;
+    padding-top: 85px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    font-size: 35px;
   }
   .red-div,
   .right-angle-triangle,

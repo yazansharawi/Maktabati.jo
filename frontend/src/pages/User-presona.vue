@@ -4,7 +4,7 @@
     <div class="progress-bar-container">
       <div class="progress-bar" :style="{ width: getProgressBarWidth }"></div>
     </div>
-    <div v-if="introDiv">
+    <div v-if="introDiv" class="welcome-div">
       <p class="firstHeader welcome-animation">
         Welcome Yazan Sharawi, So happy that you are here!
       </p>
@@ -57,7 +57,7 @@
           {{ option }}
         </v-btn>
       </div>
-      <div class="questionOptions" v-else-if="currentStep === 3">
+      <div class="questionOptions mobile" v-else-if="currentStep === 3">
         <v-btn
           v-for="(option, index) in bookTypeOptions"
           :key="index"
@@ -71,7 +71,7 @@
           {{ option }}
         </v-btn>
       </div>
-      <div class="questionOptions" v-else-if="currentStep === 4">
+      <div class="questionOptions mobile" v-else-if="currentStep === 4">
         <v-btn
           v-for="(option, index) in bookAgeOptions"
           :key="index"
@@ -99,7 +99,6 @@
         v-if="currentStep < totalSteps && currentStep !== 4"
         elevation="0"
         @click="goToNextStep"
-        class="next-question-btn"
       >
         Next Question
       </v-btn>
@@ -107,7 +106,6 @@
         v-if="currentStep === 4"
         elevation="0"
         @click="finishQuestionnaire"
-        class="next-question-btn"
       >
         Finish
       </v-btn>
@@ -116,7 +114,7 @@
 </template>
 
 <script>
-import Nav from "../components/Navs/nav-bar.vue";
+import Nav from "../components/Navs/main-navbar.vue";
 export default {
   name: "GetToKnowUser",
   components: {
@@ -308,7 +306,10 @@ export default {
     opacity: 1;
   }
 }
-
+.question-btn-container {
+  flex-direction: column;
+  padding-top: 40px;
+}
 .welcome-animation {
   animation: fadeInAnimation 1s ease-in-out;
   animation-fill-mode: both;
@@ -326,7 +327,9 @@ export default {
   transition: width 0.3s ease-in-out;
 }
 .divQuestion {
-  height: 400px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
 }
 .divQuestionHeader {
   padding-top: 20px;
@@ -364,23 +367,31 @@ export default {
   background-color: #ae0000;
   color: White;
 }
-.Next-Question-btn {
-  padding-top: 55px;
-}
 .questionHint {
   padding-top: 15px;
   font-size: 14px;
   color: #494949;
   padding-bottom: 5px;
 }
-.question-btn-container {
-  padding-top: 40px;
-}
 .prev-question-btn {
   margin-right: 20px;
 }
 
 @media (max-width: 992px) {
+  .mobile {
+    height: 100vh;
+  }
+  .main-div {
+    background-color: #f3f0e9;
+    font-weight: 700;
+    text-align: center;
+    color: #494949;
+    height: auto;
+  }
+  .welcome-div {
+    padding: 30px;
+    height: 100vh;
+  }
   .firstHeader {
     padding-top: 130px;
     font-size: 30px;
@@ -391,6 +402,8 @@ export default {
   }
   .question-btn-container {
     flex-direction: column;
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
   .progress-bar {
     transition: width 0.6s ease-in-out;

@@ -102,7 +102,7 @@ export default {
   height: 100%;
 }
 .author-info {
-  position: relative; /* Add this to make the positioning of the button relative to this container */
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 50%;
@@ -155,19 +155,19 @@ export default {
     line-height: 12px;
   }
     .authors-container {
-    flex-direction: column; /* Switch to a column layout for mobile devices */
+    flex-direction: column;
       width: 550px;
        height: 500px;
   }
 
   .author-pic {
-    width: 100%; /* Author pic takes full width on mobile */
-    height: 250px; /* Adjust the height as needed */
+    width: 100%; 
+    height: 250px; 
   }
 
   .author-info {
-    width: 100%; /* Author info takes full width on mobile */
-    margin-top: 10px; /* Add some spacing between author-pic and author-info */
+    width: 100%; 
+    margin-top: 10px;
   }
 }
 </style>

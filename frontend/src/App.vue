@@ -1,10 +1,11 @@
 <template>
       <div>
       <!-- <HomePage /> -->
-      <GetToKnowTheUser/>
+      <!-- <GetToKnowTheUser/> -->
       <!-- <BookOverview/> -->
       <!-- <shopPage/> -->
-      <categoriesPage/>
+      <!-- <categoriesPage/> -->
+      <communityPage/>
       </div>
 </template>
 
@@ -14,13 +15,15 @@
 // import HomePage from "../src/pages/home-page.vue";
 // import shopPage from '../src/pages/shop-page.vue';
 // import categoriesPage from './pages/categories-page.vue';
-import GetToKnowTheUser from '../src/pages/User-presona.vue'
+// import GetToKnowTheUser from '../src/pages/User-presona.vue'
+import communityPage from './pages/community-page.vue';
 export default {
   name: "App",
 
   components: {
     // BookOverview,
-    GetToKnowTheUser
+    // GetToKnowTheUser,
+    communityPage
     // HomePage,
     // shopPage
     // categoriesPage

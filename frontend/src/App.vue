@@ -2,22 +2,27 @@
       <div>
       <!-- <HomePage /> -->
       <!-- <GetToKnowTheUser/> -->
-      <BookOverview/>
+      <!--loginPage/> -->
+      <signupPage/>
       </div>
 </template>
 
 <script>
-import BookOverview from './pages/book-overview.vue';
+//import BookOverview from './pages/book-overview.vue';
+//import loginPage from './pages/login-page.vue';
 // import HelloWorld from './components/HelloWorld.vue'
 // import HomePage from "../src/pages/home-page.vue";
 // import GetToKnowTheUser from './components/User-presona.vue'
+import signupPage from './pages/sign-up-page.vue';
 export default {
   name: "App",
 
   components: {
-    BookOverview
+    //BookOverview
+    //loginPage
     // GetToKnowTheUser
     // HomePage
+    signupPage
   },
 };
 </script>

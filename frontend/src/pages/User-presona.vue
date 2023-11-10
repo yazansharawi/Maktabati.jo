@@ -1,6 +1,6 @@
 <template>
-  <Nav :isGetUserPage="true" />
   <div class="main-div">
+    <Nav :isGetUserPage="true" />
     <div class="progress-bar-container">
       <div class="progress-bar" :style="{ width: getProgressBarWidth }"></div>
     </div>
@@ -113,6 +113,7 @@
       </v-btn>
     </div>
   </div>
+
 </template>
 
 <script>

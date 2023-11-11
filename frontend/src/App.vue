@@ -2,16 +2,18 @@
       <!-- <div> -->
       <!-- <HomePage /> -->
       <!-- <GetToKnowTheUser/> -->
+      <OwnerDashboard/>
       <!-- <BookOverview/> -->
       <!-- <shopPage/>
       <categoriesPage/> -->
       <!-- </div> -->
       <div>
-			<router-view />
+			<!-- <router-view /> -->
 		</div>
 </template>
 
 <script>
+import OwnerDashboard from './pages/owner-dashboard.vue'
 // import BookOverview from './pages/book-overview.vue';
 // import HelloWorld from './components/HelloWorld.vue'
 // import HomePage from "../src/pages/home-page.vue";
@@ -23,6 +25,7 @@ export default {
 
   components: {
     // BookOverview,
+    OwnerDashboard
     // GetToKnowTheUser
     // HomePage,
     // shopPage

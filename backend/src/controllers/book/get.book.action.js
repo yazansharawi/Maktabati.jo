@@ -1,7 +1,13 @@
 const models = require("../../models");
 const book = models.book
-module.exports.getBooks = async (req, res) => {
-  book.findAll()
+async function getBooksByGenre(req, res){
+
+  console.log("req",req.params.genre)
+  book.findAll({
+    where: {
+      genre: req.params.genre
+  },
+  })
     .then((Book) => {
       return res.send(Book);
     })
@@ -10,3 +16,8 @@ module.exports.getBooks = async (req, res) => {
       return res.sendStatus(500);
     });
 };
+
+
+module.exports = {
+  getBooksByGenre
+}

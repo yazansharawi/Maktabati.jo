@@ -1,16 +1,21 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import vuetify from './plugins/vuetify'
-import { loadFonts } from './plugins/webfontloader'
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.min.js"
-import router from './router'
-// import VueMeta from 'vue-meta'
+import { createApp } from 'vue';
+import App from './App.vue';
+import axios from 'axios';
+import vuetify from './plugins/vuetify';
+import { loadFonts } from './plugins/webfontloader';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.min.js";
+import router from './router';
 
-loadFonts()
+axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 
-createApp(App)
+const app = createApp(App);
+
+app
   .use(vuetify)
   .use(router)
-  // .use(VueMeta)
-  .mount('#app')
+  .mount('#app');
+
+app.config.globalProperties.$axios = axios;
+
+loadFonts();

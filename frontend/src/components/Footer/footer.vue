@@ -1,6 +1,6 @@
 <template>
 <div>
-<footer class="text-center text-lg-start bg-light text-muted">
+<footer class="text-center text-lg-start text-muted">
   <section class="d-flex justify-content-center justify-content-lg-between">
     <div>
       <a href="" class="me-4 text-reset">

@@ -1,6 +1,6 @@
 <template>
-<div>
-<footer class="text-center text-lg-start text-muted">
+<div style="border-top:1px solid black">
+<footer height="266px"  class="text-center text-lg-start  text-muted">
   <section class="d-flex justify-content-center justify-content-lg-between">
     <div>
       <a href="" class="me-4 text-reset">
@@ -26,36 +26,40 @@
   <section class="">
     <div class="container text-center text-md-start mt-5">
       <div class="row mt-3">
-        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+        <div class="col-md-1 col-lg-2 col-xl-2 mx-auto mb-4">
           <h6 class="text-uppercase fw-bold mb-4">
-            <i class="fas fa-gem me-3"></i>Company name
+            Company
           </h6>
           <p>
-            Here you can use rows and columns to organize your footer content. Lorem ipsum
-            dolor sit amet, consectetur adipisicing elit.
+            <a href="#!" class="text-reset">About us</a>
           </p>
+          <p>
+            <a href="#!" class="text-reset">Contact us</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset">Company</a>
+          </p>
+      
         </div>
+       
         <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
           <h6 class="text-uppercase fw-bold mb-4">
-            Products
+            Help
           </h6>
           <p>
-            <a href="#!" class="text-reset">Angular</a>
+            <a href="#!" class="text-reset">Subscription Instruction</a>
           </p>
           <p>
-            <a href="#!" class="text-reset">React</a>
+            <a href="#!" class="text-reset">Help Center</a>
           </p>
           <p>
-            <a href="#!" class="text-reset">Vue</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Laravel</a>
+            <a href="#!" class="text-reset">Problem with Site</a>
           </p>
         </div>
 
         <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
           <h6 class="text-uppercase fw-bold mb-4">
-            Useful links
+            User
           </h6>
           <p>
             <a href="#!" class="text-reset">Pricing</a>
@@ -70,15 +74,29 @@
             <a href="#!" class="text-reset">Help</a>
           </p>
         </div>
-        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
-          <p><i class="fas fa-home me-3"></i> New York, NY 10012, US</p>
+        <div class="col-md-4 col-lg-2 col-xl-2 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">
+            Follow us
+          </h6>
           <p>
-            <i class="fas fa-envelope me-3"></i>
-            info@example.com
+            <a href="facebook.com" class="text-reset">Facebook</a>
+    </p>
+          <p>
+            <a href="instagram.com" class="text-reset">Instagram</a>
           </p>
-          <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
-          <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p>
+          <p>
+            <a href="twitter.com" class="text-reset">Twitter</a>
+          </p>
+        </div>
+        <div class="col-md-5 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+          <v-text-field
+            label="Enter Email Here"
+            placeholder="Enter Email here"
+            variant="outlined"></v-text-field>
+           <v-btn  class="white --text" block color="#8E0000"><span>Submit</span></v-btn>
+          
+          
         </div>
       </div>
     </div>
@@ -92,3 +110,12 @@ export default {
   name: "FooterComponent",
 };
 </script>
+<style  scoped>
+h6{
+  color:#494949
+}
+span{
+  color:white;
+}
+
+</style>

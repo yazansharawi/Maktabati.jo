@@ -2,23 +2,24 @@
   <div>
     <Nav />
 
-    <div class="container-fluid main-container">
-      <div class="left-div">
-        <div v-if="this.isWideScreen" class="header-text">
-          What Books are you <br />
-          looking for?
-        </div>
-        <div v-else>What Books are you looking for?</div>
-        <div class="sub-text" v-if="isWideScreen">
-          Not Sure What To Read next? Explore Our Catalog With<br />
-          Public Domain With Our Editors
-        </div>
-        <div class="sub-text" v-else>
-          Not Sure What To Read next? Explore Our Catalog With Public Domain
-          With Our Editors
-        </div>
+    <div style="display: flex; flex-direction: column; gap: 20px">
+      <div class="container-fluid main-container">
+        <div class="left-div">
+          <div v-if="this.isWideScreen" class="header-text">
+            What Books are you <br />
+            looking for?
+          </div>
+          <div v-else>What Books are you looking for?</div>
+          <div class="sub-text" v-if="isWideScreen">
+            Not Sure What To Read next? Explore Our Catalog With<br />
+            Public Domain With Our Editors
+          </div>
+          <div class="sub-text" v-else>
+            Not Sure What To Read next? Explore Our Catalog With Public Domain
+            With Our Editors
+          </div>
 
-        <!-- <div class="header-search">
+          <!-- <div class="header-search">
           <div class="search-container">
             <div class="red-box">hi</div>
             <div class="search-btn">
@@ -26,34 +27,34 @@
             </div>
           </div>
         </div> -->
+        </div>
+
+        <div class="right-div">
+          <!-- Content for the blue div on the right -->
+        </div>
       </div>
 
-      <div class="right-div">
-        <!-- Content for the blue div on the right -->
-      </div>
+      <!-- BestSellers list-->
+      <BookLists :background-color="'white'" :sectionName="'BestSellers'" />
+
+      <!-- Offers list-->
+      <!-- for now we will use :isOffer prop , but in the future we will get the offers from the api -->
+      <BookLists
+        :background-color="'#F3F0E9'"
+        :sectionName="'Offers'"
+        :isOffer="true"
+      />
+
+      <!-- Offers list-->
+      <BookLists
+        :background-color="'white'"
+        :sectionName="'Based On Your Search'"
+      />
+
+      <AboutAuthors />
+
+      <Footer />
     </div>
-
-    <!-- BestSellers list-->
-    <BookLists :background-color="'white'" :sectionName="'BestSellers'" />
-
-    <!-- Offers list-->
-    <!-- for now we will use :isOffer prop , but in the future we will get the offers from the api -->
-    <BookLists
-      :background-color="'#F3F0E9'"
-      :sectionName="'Offers'"
-      :isOffer="true"
-    />
-
-    <!-- Offers list-->
-    <BookLists
-      :background-color="'white'"
-      :sectionName="'Based On Your Search'"
-    />
-
-    <AboutAuthors />
-
-    <div style="height: 320px"></div>
-    <Footer />
   </div>
 </template>
 
@@ -61,23 +62,18 @@
 import Nav from "../components/Navs/main-navbar.vue";
 import Footer from "../components/Footer/footer.vue";
 import BookLists from "../components/Book-components/Books-list.vue";
-import AboutAuthors from "../components/About-authors-list/Authors-list.vue"
+import AboutAuthors from "../components/About-authors-list/Authors-list.vue";
 export default {
   name: "HomePage",
   components: {
     Nav,
     Footer,
     BookLists,
-    AboutAuthors
+    AboutAuthors,
   },
   data() {
     return {
       isWideScreen: window.innerWidth >= 992,
-    };
-  },
-  metaInfo() {
-    return {
-      title: this.$route.meta.title || 'Default Title',
     };
   },
   mounted() {

@@ -75,6 +75,11 @@ export default {
       isWideScreen: window.innerWidth >= 992,
     };
   },
+  metaInfo() {
+    return {
+      title: this.$route.meta.title || 'Default Title',
+    };
+  },
   mounted() {
     window.addEventListener("resize", this.handleResize);
   },

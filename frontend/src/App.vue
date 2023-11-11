@@ -4,19 +4,12 @@
       <!-- <GetToKnowTheUser/> -->
       <OwnerDashboard/>
       <!-- <BookOverview/> -->
-<<<<<<< HEAD
-      <!-- <shopPage/> -->
-      <OwnerDashboard/>
-      <categoriesPage/>
-      </div>
-=======
       <!-- <shopPage/>
       <categoriesPage/> -->
       <!-- </div> -->
       <div>
 			<router-view />
 		</div>
->>>>>>> main
 </template>
 
 <script>
@@ -32,10 +25,7 @@ export default {
 
   components: {
     // BookOverview,
-<<<<<<< HEAD
     OwnerDashboard
-=======
->>>>>>> main
     // GetToKnowTheUser
     // HomePage,
     // shopPage

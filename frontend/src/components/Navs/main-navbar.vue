@@ -48,7 +48,7 @@
           </v-text-field>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item" v-for="item in navItems" :key="item.id">
-              <a class="nav-link" :href="item.link">{{ item.label }}</a>
+              <router-link class="nav-link" :to="item.link">{{ item.label }}</router-link>
             </li>
           </ul>
         </div>
@@ -80,9 +80,9 @@ export default {
   computed: {
     navItems() {
       let items = [
-        { id: 1, label: "Home", link: "" },
-        { id: 2, label: "Shop", link: "" },
-        { id: 3, label: "Categories", link: "" },
+        { id: 1, label: "Home", link: "/" },
+        { id: 2, label: "Shop", link: "/shop-page" },
+        { id: 3, label: "Categories", link: "/categories-page" },
         { id: 4, label: "Community", link: "" },
         { id: 5, label: "WishList", link: "" },
       ];

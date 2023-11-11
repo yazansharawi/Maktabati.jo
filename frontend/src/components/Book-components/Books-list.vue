@@ -115,7 +115,18 @@ export default {
       ],
     };
   },
-  methods: {},
+  created() {
+    this.getBooks();
+  },
+  methods: {
+    getBooks() {
+      this.$axios
+        .get("book/by-genre/" + this.sectionName)
+        .then(async (response) => {
+          console.log("hi", response.data);
+        });
+    },
+  },
 };
 </script>
 

@@ -3,7 +3,7 @@
       <!-- <HomePage /> -->
       <!-- <GetToKnowTheUser/> -->
       <!--loginPage/> -->
-      <signupPage/>
+      <signupPage/> 
       </div>
 </template>
 

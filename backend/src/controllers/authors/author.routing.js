@@ -1,11 +1,26 @@
-
-const { getMainPafeAuthors } = require('./get.author.action')
-
+const postActions = require("./post.actions");
+const getActions = require("./get.actions");
+const putActions = require("./put.actions")
 
 module.exports = {
-    '/main-page': {
-        get: {
-            action: getMainPafeAuthors
-        },
+  "/": {
+    post: {
+      action: postActions.addAuthors,
     },
-}
+  },
+  "/main-page": {
+    get: {
+      action: getActions.getMainPafeAuthors,
+    },
+  },
+  "/update-info":{
+    put:{
+      action:putActions.updateAuthors
+    }
+  },
+  "/by-id/:id":{
+    get:{
+      action:getActions.getAuthorById
+    }
+  },
+};

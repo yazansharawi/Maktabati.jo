@@ -1,10 +1,30 @@
-const { getBooks } = require('./get.book.action')
-
+const getActions = require("./get.actions");
+const postActions = require("./post.actions");
 
 module.exports = {
-    '/': {
-        get: {
-            action: getBooks
-        },
+  "/": {
+    post: {
+      action: postActions.createNewBooks,
     },
-}
+  },
+  "/by-genre/:genre": {
+    get: {
+      action: getActions.getBooksByGenre,
+    },
+  },
+  "/by-id/:id": {
+    get: {
+      action: getActions.getBookById,
+    },
+  },
+  "/best-sellers": {
+    get: {
+      action: getActions.getBestSellersBooks,
+    },
+  },
+  "/has-offer": {
+    get: {
+      action: getActions.getBookWithOffer,
+    },
+  },
+};

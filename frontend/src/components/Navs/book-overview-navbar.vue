@@ -1,12 +1,22 @@
 <template>
-   <div class="nav-container" :style="{ background: isMobile ? '#f3f0e9' : 'linear-gradient(to left, white 50%, #f3f0e9 50%)' }">
+  <div
+    class="nav-container"
+    :style="{
+      background: isMobile
+        ? '#f3f0e9'
+        : 'linear-gradient(to left, white 50%, #f3f0e9 50%)',
+    }"
+  >
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
-        <div class="back_button">
-              <v-icon size="2rem" color="white"
-              >mdi-arrow-left</v-icon
-            >
-        </div>
+        <router-link
+          :to="{ name: this.isCategoriesPage == 'false' ? 'CategoriesPage' : 'HomePage' }"
+          style="text-decoration: none; color: inherit"
+        >
+          <div class="back_button">
+            <v-icon size="2rem" color="white">mdi-arrow-left</v-icon>
+          </div>
+        </router-link>
         <button
           v-if="!isGetUserPage"
           class="navbar-toggler"
@@ -26,13 +36,22 @@
         >
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item" v-for="item in navItems" :key="item.id">
-              <a class="nav-link" :href="item.link">{{ item.label }}</a>
+              <a
+                class="nav-link"
+                :href="item.link"
+                @click="handleNavItemClick(item.label)"
+                >{{ item.label }}</a
+              >
             </li>
           </ul>
         </div>
       </div>
       <div class="red-div">
-        <div class="white-circle" v-if="!isGetUserPage"></div>
+        <div class="white-circle" v-if="!isGetUserPage">
+          <v-icon size="2rem" color="#ae0000" style="padding-top: 11px">
+            mdi-account
+          </v-icon>
+        </div>
       </div>
       <div class="right-angle-triangle"></div>
       <div class="left-angle-triangle"></div>
@@ -54,14 +73,19 @@ export default {
       required: false,
       default: false,
     },
+    isCategoriesPage: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   computed: {
     navItems() {
       let items = [
-        { id: 1, label: "About", link: "" },
-        { id: 2, label: "Topics", link: "" },
-        { id: 3, label: "Author", link: "" },
-        { id: 4, label: "Reviews", link: "" },
+        { id: 1, label: "About" },
+        { id: 2, label: "Topics" },
+        { id: 3, label: "Author" },
+        { id: 4, label: "Reviews" },
       ];
 
       if (this.isMobile) {
@@ -82,6 +106,9 @@ export default {
     checkScreenSize() {
       this.isMobile = window.innerWidth <= 992;
     },
+    handleNavItemClick(label) {
+      this.$emit("nav-item-click", label);
+    },
   },
 };
 </script>
@@ -93,13 +120,13 @@ export default {
   background-color: #ae0000;
   border-radius: 50%;
   display: flex;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   margin-right: 50px;
 }
 .nav-container {
-padding:15px;
-background: linear-gradient(to left, white 50%, #f3f0e9 50%);
+  padding: 15px;
+  background: linear-gradient(to left, white 50%, #f3f0e9 50%);
 }
 .NavHeader {
   margin: 10px;
@@ -162,6 +189,9 @@ background: linear-gradient(to left, white 50%, #f3f0e9 50%);
   background-color: white;
   border-radius: 20px;
   margin: 20px auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column-reverse;
 }
 @media (max-width: 992px) {
   .centered-header {
@@ -194,16 +224,16 @@ background: linear-gradient(to left, white 50%, #f3f0e9 50%);
     font-size: 20px;
   }
   .nav-container {
-  background-color: white;
-}
-.back_button {
-  height: 35px;
-  width: 35px;
-  background-color: #ae0000;
-  border-radius: 50%;
-  display: flex;
-  align-items: center; 
-  justify-content: center;
-}
+    background-color: white;
+  }
+  .back_button {
+    height: 35px;
+    width: 35px;
+    background-color: #ae0000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>

@@ -13,10 +13,10 @@
         >
           <div class="author-info">
             <div class="all">
-              <div style="display: flex; flex: 0.7">
+              <div class="author-img">
                 <img :src="author.image" />
               </div>
-              <div style="display: flex; flex: 1">
+              <div style="display: flex; flex: 1.5">
                 <div class="author-image-text">
                   <div
                     style="
@@ -57,28 +57,30 @@
 export default {
   name: "AuthorList",
   components: {},
-  props: {},
-  data() {
-    return {
-      authors: null,
-    };
-  },
-  created(){
-   this.getAuthors()
-  },
-  methods: {
-    getAuthors() {
-      this.$axios
-        .get("authors/main-page")
-        .then(async (response) => {
-          this.authors = response.data
-        })
+  props: {
+    authors: {
+      type: Object,
+      requierd: false,
+      default: () => {
+        return {};
+      },
     },
+  },
+  data() {
+    return {};
   },
 };
 </script>
 
 <style scoped>
+.author-img {
+  display: flex;
+  flex: 0.5;
+}
+img {
+  width: 300px;
+  height: 100%;
+}
 .all {
   display: flex;
 }
@@ -134,6 +136,14 @@ export default {
   padding-top: 18px;
 }
 @media (max-width: 991.98px) {
+  .author-img {
+    display: flex;
+    flex: 0.5;
+  }
+  img {
+    width: 300px;
+    height: 100%;
+  }
   .all {
     flex-direction: column;
     display: flex;

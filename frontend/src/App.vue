@@ -1,19 +1,21 @@
 <template>
-      <!-- <div> -->
-      <!-- <HomePage /> -->
-      <!-- <GetToKnowTheUser/> -->
-      <OwnerDashboard/>
-      <!-- <BookOverview/> -->
-      <!-- <shopPage/>
+  <!-- <div> -->
+  <!-- <HomePage /> -->
+  <!-- <GetToKnowTheUser/> -->
+  <!-- <OwnerDashboard/> -->
+  <!-- <BookOverview/> -->
+  <!-- <shopPage/>
       <categoriesPage/> -->
-      <!-- </div> -->
-      <div>
-			<!-- <router-view /> -->
-		</div>
+  <!-- </div> -->
+  <div>
+    <router-view />
+    <!-- <OwnerDashboard/> -->
+      <!-- <GetToKnowTheUser/> -->
+  </div>
 </template>
 
 <script>
-import OwnerDashboard from './pages/owner-dashboard.vue'
+// import OwnerDashboard from './pages/owner-dashboard.vue'
 // import BookOverview from './pages/book-overview.vue';
 // import HelloWorld from './components/HelloWorld.vue'
 // import HomePage from "../src/pages/home-page.vue";
@@ -25,7 +27,7 @@ export default {
 
   components: {
     // BookOverview,
-    OwnerDashboard
+    // OwnerDashboard
     // GetToKnowTheUser
     // HomePage,
     // shopPage
@@ -34,7 +36,7 @@ export default {
 };
 </script>
 <style>
-div{
+div {
   font-family: "Times New Roman";
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-        <v-row
+    <v-row
       style="
         background-color: #f3f0e9;
         height: auto;
@@ -18,13 +18,14 @@
       <v-col cols="12" sm="12" md="4">
         <div style="width: 100%; height: 100%; padding: 40px; padding-top: 0px">
           <img
-            src="https://ucarecdn.com/472f5659-20c0-4135-be84-8b7534ed5c0c/ego1.png"
+            :src="bookimage"
             alt="Book Image"
             style="width: 100%; height: 100%"
           />
         </div>
       </v-col>
       <v-col
+        v-if="evenTopics.length > 0"
         cols="12"
         sm="12"
         md="4"
@@ -32,8 +33,8 @@
         class="divsTopics"
       >
         <div
-          v-for="item in divItems"
-          :key="item.id"
+          v-for="(item, index) in evenTopics"
+          :key="index"
           style="
             width: 90%;
             height: 84px;
@@ -51,15 +52,16 @@
               font-weight: bold;
               color: #000000;
               padding-right: 10px;
-              margin-left: 20px;
+              margin-left: 12px;
             "
           >
-            {{ item.number }}
+            {{ index + 1 }}
           </div>
-          <div style="font-size: 25px; color: #000000">{{ item.text }}</div>
+          <div style="font-size: 20px; color: #000000">{{ item.topic }}</div>
         </div>
       </v-col>
       <v-col
+        v-if="oddTopics.length > 0"
         cols="12"
         sm="12"
         md="4"
@@ -67,8 +69,8 @@
         class="divsTopics"
       >
         <div
-          v-for="item in divItems"
-          :key="item.id"
+          v-for="(item, index) in oddTopics"
+          :key="index"
           style="
             width: 90%;
             height: 84px;
@@ -86,12 +88,12 @@
               font-weight: bold;
               color: #000000;
               padding-right: 10px;
-              margin-left: 20px;
+              margin-left: 12px;
             "
           >
-            {{ item.number }}
+            {{ index + evenTopics.length + 1 }}
           </div>
-          <div style="font-size: 25px; color: #000000">{{ item.text }}</div>
+          <div style="font-size: 20px; color: #000000">{{ item.topic }}</div>
         </div>
       </v-col>
     </v-row>
@@ -109,6 +111,31 @@ export default {
         { id: 3, number: "03", text: "Yet another topic" },
       ],
     };
+  },
+  props: {
+    bookimage: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    topics: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {};
+      },
+    },
+  },
+  computed: {
+    topicsArray() {
+      return Object.values(this.topics);
+    },
+    evenTopics() {
+      return this.topicsArray.filter((_, index) => index % 2 === 0);
+    },
+    oddTopics() {
+      return this.topicsArray.filter((_, index) => index % 2 !== 0);
+    },
   },
 };
 </script>

@@ -24,7 +24,7 @@
     >
       <v-row cols="12" sm="6" style="padding: 0px">
         <v-col
-          v-for="index in 3"
+          v-for="(item, index) in data"
           :key="index"
           cols="12"
           sm="4"
@@ -35,26 +35,13 @@
             justify-content: center;
           "
         >
-          <div
-            style="
-              box-sizing: border-box;
-              position: relative;
-              width: 357px;
-              height: 239px;
-              background: #fffdfd;
-              border: 1px solid #000000;
-              border-radius: 5px;
-              margin: 10px auto;
-              padding: 10px;
-              padding-top: 35px;
-            "
-          >
+          <div :style="style(sectionName)">
             <div
               style="
                 box-sizing: border-box;
                 position: absolute;
-                height: 60px;
-                width: 60px;
+                height: 58px;
+                width: 58px;
                 top: -25px;
                 background: #fffdfd;
                 border: 1px solid #000000;
@@ -66,16 +53,23 @@
                 align-items: center;
               "
             >
-              <v-icon size="4.5rem" color="#000000" style="right: 1px"
-                >mdi-numeric-{{ index }}</v-icon
-              >
+              <div>
+                <div v-if="sectionName === 'Reviews'">
+                  <img
+                    style="height: 55px; border-radius: 40px"
+                    :src="item.User.image"
+                  />
+                </div>
+                <div v-else>
+                  <v-icon size="4.5rem" color="#000000" style="right: 1px">
+                    mdi-numeric-{{ index + 1 }}
+                  </v-icon>
+                </div>
+              </div>
             </div>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised.
+            <div style="display: flex; align-items: center">
+              {{ item.description ? item.description : item.comment }}
+            </div>
           </div>
         </v-col>
       </v-row>
@@ -86,6 +80,41 @@
 <script>
 export default {
   name: "DivSection",
+  computed: {
+    style() {
+      return function (sectionName) {
+        if (sectionName === "Reviews") {
+          return {
+            boxSizing: "border-box",
+            position: "relative",
+            width: "357px",
+            height: "150px",
+            background: "#fffdfd",
+            border: "1px solid #000000",
+            borderRadius: "5px",
+            margin: "10px auto",
+            padding: "10px",
+            paddingTop: "35px",
+            display: "flex",
+            "justify-content": "center",
+          };
+        } else {
+          return {
+            boxSizing: "border-box",
+            position: "relative",
+            width: "357px",
+            height: "auto",
+            background: "#fffdfd",
+            border: "1px solid #000000",
+            borderRadius: "5px",
+            margin: "10px auto",
+            padding: "10px",
+            paddingTop: "35px",
+          };
+        }
+      };
+    },
+  },
   props: {
     sectionName: {
       type: String,
@@ -96,6 +125,13 @@ export default {
       type: String,
       required: false,
       default: "",
+    },
+    data: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+      required: false,
     },
   },
 };

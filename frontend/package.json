@@ -17,6 +17,7 @@
     "roboto-fontface": "*",
     "vue": "^3.3.4",
     "vue-meta": "^2.4.0",
+    "vue-rate-it": "^2.1.0",
     "vue-router": "^4.2.5",
     "vue-star-rating": "^2.1.0",
     "vuetify": "^3.3.9",

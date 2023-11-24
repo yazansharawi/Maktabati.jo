@@ -27,11 +27,11 @@
       </div>
     </div>
     <div class="divQuestion" v-if="firstQuestionDiv">
-      <div class="divQuestionHeader">{{ questions[currentStep - 1] }}</div>
+      <div class="divQuestionHeader">{{ $questions[currentStep - 1] }}</div>
       <div class="questionHint">(You can choose multiple options)</div>
       <div class="questionOptions" v-if="currentStep === 1">
         <v-btn
-          v-for="(option, index) in genreOptions"
+          v-for="(option, index) in $genreOptions"
           :key="index"
           elevation="0"
           @click="toggleGenreOption(index)"
@@ -45,7 +45,7 @@
       </div>
       <div class="questionOptions" v-else-if="currentStep === 2">
         <v-btn
-          v-for="(option, index) in authorOptions"
+          v-for="(option, index) in $authorOptions"
           :key="index"
           elevation="0"
           @click="toggleAuthorOption(index)"
@@ -59,7 +59,7 @@
       </div>
       <div class="questionOptions mobile" v-else-if="currentStep === 3">
         <v-btn
-          v-for="(option, index) in bookTypeOptions"
+          v-for="(option, index) in $bookTypeOptions"
           :key="index"
           elevation="0"
           @click="toggleAuthorOption(index)"
@@ -73,7 +73,7 @@
       </div>
       <div class="questionOptions mobile" v-else-if="currentStep === 4">
         <v-btn
-          v-for="(option, index) in bookAgeOptions"
+          v-for="(option, index) in $bookAgeOptions"
           :key="index"
           elevation="0"
           @click="bookAgeOptions(index)"
@@ -120,118 +120,17 @@ export default {
   components: {
     Nav,
   },
+  created() {
+  },
   data() {
     return {
       introDiv: true,
       firstQuestionDiv: false,
       currentStep: 0,
       totalSteps: 4,
-      questions: [
-        "What's your preferred genre?",
-        "Who are your favorite authors?",
-        "Do you prefer paperbacks or ebooks?",
-        "Do you prefer old books or new ones?",
-      ],
-      genreOptions: [
-        "Fiction",
-        "Non-Fiction",
-        "Mystery",
-        "Romance",
-        "Fantasy",
-        "Science Fiction",
-        "Biography",
-        "Thriller",
-        "Horror",
-        "Historical Fiction",
-        "Young Adult",
-        "Self-Help",
-        "Poetry",
-        "Graphic Novels",
-        "Classic Literature",
-        "Adventure",
-        "Humor",
-        "Dystopian",
-        "Memoir",
-        "Contemporary",
-        "Science",
-        "Travel",
-        "Religion",
-        "Psychology",
-        "Art",
-        "History",
-        "Parenting",
-        "Business",
-        "Philosophy",
-        "Politics",
-        "Children's",
-        "Short Stories",
-        "Essay Collections",
-        "Educational",
-        "Self-Development",
-        "True Crime",
-        "Western",
-        "Romantic Suspense",
-        "Paranormal",
-        "Mythology",
-        "Steampunk",
-        "Drama",
-        "Science Fantasy",
-        "Sports",
-        "War",
-        "Detective",
-        "Urban Fantasy",
-        "Cyberpunk",
-        "Time Travel",
-        "Supernatural",
-        "Other",
-      ],
       selectedGenreOptions: [],
-      authorOptions: [
-        "J.K. Rowling",
-        "Stephen King",
-        "Agatha Christie",
-        "George R.R. Martin",
-        "Jane Austen",
-        "Dan Brown",
-        "Neil Gaiman",
-        "Tolkien",
-        "Terry Pratchett",
-        "Haruki Murakami",
-        "Mark Twain",
-        "H.P. Lovecraft",
-        "Charles Dickens",
-        "Gabriel Garcia Marquez",
-        "Khaled Hosseini",
-        "Leo Tolstoy",
-        "Arthur Conan Doyle",
-        "J.R.R. Tolkien",
-        "Victor Hugo",
-        "Oscar Wilde",
-        "Fyodor Dostoevsky",
-        "Virginia Woolf",
-        "Ray Bradbury",
-        "Hermann Hesse",
-        "Ernest Hemingway",
-        "Albert Camus",
-        "Agatha Christie",
-        "Jules Verne",
-        "J.D. Salinger",
-        "Jane Austen",
-        "Mary Shelley",
-        "George Orwell",
-        "Emily Dickinson",
-        "Leo Tolstoy",
-        "Charles Dickens",
-        "Toni Morrison",
-        "Edgar Allan Poe",
-        "Oscar Wilde",
-        "F. Scott Fitzgerald",
-        "Walt Whitman",
-      ],
       selectedAuthorOptions: [],
-      bookTypeOptions: ["Paper Books", "eBooks"],
       selectedBookTypeOptions: [],
-      bookAgeOptions: ["Old Books", "New Ones"],
       selectedbookAgeOptions: [],
     };
   },

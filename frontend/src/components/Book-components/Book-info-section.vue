@@ -35,16 +35,14 @@
           <div style="font-size: 20px; color: #494949">Badges</div>
           <div style="margin-top: 15px; display: flex" class="btn-col">
             <v-btn
-              v-for="(index, badgeIndex) in numberOfBadges"
+              v-for="(tag, index) in tags"
               :key="index"
               elevation="0"
               color="#AE0000"
               class="btn mr-1"
             >
-              <v-icon color="white" class="pr-1"
-                >mdi-{{ badgeIcons[badgeIndex] }}</v-icon
-              >
-              <span style="color: white">{{ badgeTexts[badgeIndex] }}</span>
+              <v-icon color="white" class="pr-1">{{ tag.icon }}</v-icon>
+              <span style="color: white">{{ tag.tagName }}</span>
             </v-btn>
           </div>
         </div>
@@ -62,20 +60,15 @@ export default {
       required: false,
       default: null,
     },
-    badgeIcons: {
-      type: Array,
-      required: false,
-      default: null,
-    },
-    badgeTexts: {
-      type: Array,
-      required: false,
-      default: null,
-    },
     numberOfBadges: {
       type: Number,
       required: false,
       default: 0,
+    },
+    tags: {
+      type: Object,
+      required: false,
+      default: null,
     },
   },
   methods: {},

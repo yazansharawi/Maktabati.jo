@@ -18,12 +18,13 @@ const routes= [
     },
 	},
   {
-    path: '/book-overview',
+    path: '/book-overview/:id',
     name: 'BookOverView',
 		component: () => import('@/pages/book-overview.vue'),
     meta: {
       title: 'BookOverView'
     },
+    props: true,
 	},
   {
     path: '/user-presona',

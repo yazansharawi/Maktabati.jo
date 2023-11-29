@@ -2,23 +2,24 @@
   <div>
     <Nav />
 
-    <div class="container-fluid main-container">
-      <div class="left-div">
-        <div v-if="this.isWideScreen" class="header-text">
-          What Books are you <br />
-          looking for?
-        </div>
-        <div v-else>What Books are you looking for?</div>
-        <div class="sub-text" v-if="isWideScreen">
-          Not Sure What To Read next? Explore Our Catalog With<br />
-          Public Domain With Our Editors
-        </div>
-        <div class="sub-text" v-else>
-          Not Sure What To Read next? Explore Our Catalog With Public Domain
-          With Our Editors
-        </div>
+    <div style="display: flex; flex-direction: column; gap: 20px">
+      <div class="container-fluid main-container">
+        <div class="left-div">
+          <div v-if="this.isWideScreen" class="header-text">
+            What Books are you <br />
+            looking for?
+          </div>
+          <div v-else>What Books are you looking for?</div>
+          <div class="sub-text" v-if="isWideScreen">
+            Not Sure What To Read next? Explore Our Catalog With<br />
+            Public Domain With Our Editors
+          </div>
+          <div class="sub-text" v-else>
+            Not Sure What To Read next? Explore Our Catalog With Public Domain
+            With Our Editors
+          </div>
 
-        <!-- <div class="header-search">
+          <!-- <div class="header-search">
           <div class="search-container">
             <div class="red-box">hi</div>
             <div class="search-btn">
@@ -26,34 +27,53 @@
             </div>
           </div>
         </div> -->
+        </div>
+
+        <div class="right-div">
+          <img
+            src="https://ucarecdn.com/472f5659-20c0-4135-be84-8b7534ed5c0c/ego1.png"
+            style="max-height: 430px; padding-left: 250px"
+          />
+          <img
+            src="https://ucarecdn.com/127a9916-61d1-4fdc-a7a0-35ad22d4d95a/81ym3QUd3KL_AC_UF10001000_QL80_.jpg"
+            style="max-height: 430px; padding-left: 200px"
+          />
+          <img
+            src="https://ucarecdn.com/7273fd71-8e03-4bb3-a1da-42afd9977ce1/71ucpucTRL_AC_UF10001000_QL80_.jpg"
+            style="max-height: 430px"
+          />
+        </div>
       </div>
 
-      <div class="right-div">
-        <!-- Content for the blue div on the right -->
-      </div>
+      <!-- BestSellers list-->
+      <BookLists
+        :background-color="'white'"
+        :sectionName="'BestSellers'"
+        :books="bestSellersData"
+        :isHomePage="true"
+      />
+
+      <!-- Offers list-->
+      <!-- for now we will use :isOffer prop , but in the future we will get the offers from the api -->
+      <BookLists
+        :background-color="'#F3F0E9'"
+        :sectionName="'Offers'"
+        :isOffer="true"
+        :books="hasOfferData"
+        :isHomePage="true"
+      />
+
+      <!-- Based On Search-->
+      <BookLists
+        :background-color="'white'"
+        :sectionName="'Based On Your Search'"
+        :isHomePage="true"
+      />
+
+      <AboutAuthors :authors="authors" />
+
+      <Footer />
     </div>
-
-    <!-- BestSellers list-->
-    <BookLists :background-color="'white'" :sectionName="'BestSellers'" />
-
-    <!-- Offers list-->
-    <!-- for now we will use :isOffer prop , but in the future we will get the offers from the api -->
-    <BookLists
-      :background-color="'#F3F0E9'"
-      :sectionName="'Offers'"
-      :isOffer="true"
-    />
-
-    <!-- Offers list-->
-    <BookLists
-      :background-color="'white'"
-      :sectionName="'Based On Your Search'"
-    />
-
-    <AboutAuthors />
-
-    <div style="height: 320px"></div>
-    <Footer />
   </div>
 </template>
 
@@ -61,24 +81,27 @@
 import Nav from "../components/Navs/main-navbar.vue";
 import Footer from "../components/Footer/footer.vue";
 import BookLists from "../components/Book-components/Books-list.vue";
-import AboutAuthors from "../components/About-authors-list/Authors-list.vue"
+import AboutAuthors from "../components/About-authors-list/Authors-list.vue";
 export default {
   name: "HomePage",
   components: {
     Nav,
     Footer,
     BookLists,
-    AboutAuthors
+    AboutAuthors,
   },
   data() {
     return {
       isWideScreen: window.innerWidth >= 992,
+      bestSellersData: null,
+      hasOfferData: null,
+      authors: null,
     };
   },
-  metaInfo() {
-    return {
-      title: this.$route.meta.title || 'Default Title',
-    };
+  created() {
+    this.getBestSellers();
+    this.getHasOffer();
+    this.getAuthors();
   },
   mounted() {
     window.addEventListener("resize", this.handleResize);
@@ -89,6 +112,31 @@ export default {
   methods: {
     handleResize() {
       this.isWideScreen = window.innerWidth >= 992;
+    },
+    getBestSellers() {
+      this.$axios
+        .get("book/best-sellers")
+        .then(async (response) => {
+          this.bestSellersData = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    },
+    getHasOffer() {
+      this.$axios
+        .get("book/has-offer")
+        .then(async (response) => {
+          this.hasOfferData = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    },
+    getAuthors() {
+      this.$axios.get("authors/main-page").then(async (response) => {
+        this.authors = response.data;
+      });
     },
   },
 };
@@ -114,9 +162,23 @@ export default {
 }
 
 .right-div {
-  background-color: green;
   height: 500px;
   flex: 1;
+  display: flex;
+}
+
+.right-div img {
+  position: absolute;
+  z-index: 1;
+}
+
+.right-div img:nth-child(2) {
+  z-index: 2;
+  padding-left: 40px;
+}
+
+.right-div img:nth-child(3) {
+  z-index: 3;
 }
 
 .header-text {

@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import OwnerSidebar from "./owner-sidebar.vue";
+import OwnerSidebar from "../components/owner-sidebar.vue";
 import Chart from "chart.js/auto"; // Import Chart.js
 
 export default {   

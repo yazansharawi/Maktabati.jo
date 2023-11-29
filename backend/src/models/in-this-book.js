@@ -1,27 +1,24 @@
 const Sequelize = require("sequelize");
 
-class Review extends Sequelize.Model {
+class inThisBook extends Sequelize.Model {
   static init(sequelize, DataTypes) {
     return super.init(
       {
-        userId: DataTypes.INTEGER,
+        description: DataTypes.STRING,
         bookId: DataTypes.INTEGER,
-        storeId: DataTypes.INTEGER,
-        rating: DataTypes.DOUBLE,
-        comment: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
         deletedAt: DataTypes.DATE,
       },
       {
-        tableName: "review",
+        tableName: "in_this_book",
         sequelize,
       }
     );
   }
   static associate(models) {
-    this.belongsTo(models.User, { foreignKey: "userId" });
+    this.belongsTo(models.book, { foreignKey: "bookId" });
   }
 }
 
-module.exports = Review;
+module.exports = inThisBook;

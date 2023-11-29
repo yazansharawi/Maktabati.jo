@@ -29,10 +29,10 @@
         class="authorInfo"
       >
         <div style="font-size: 50px; font-weight: bold; color: #494949">
-          {{ authorName }}
+          {{ authorName ? authorName : "no name" }}
         </div>
         <div>
-          {{ authorBio }}
+          {{ authorBio ? authorBio : "no bio" }}
         </div>
       </v-col>
     </v-row>
@@ -54,7 +54,7 @@ export default {
       default: null,
     },
     authorBio: {
-      type: Boolean,
+      type: String,
       required: false,
       default: null,
     },

@@ -10,7 +10,7 @@
             NavHeader: !isGetUserPage,
             'NavHeader centered-header': isGetUserPage,
           }"
-            :style="{ 'font-size': isGetUserPage ? '40px' : '' }"
+          :style="{ 'font-size': isGetUserPage ? '40px' : '' }"
         >
           Maktabti.jo
         </div>
@@ -47,14 +47,22 @@
             >
           </v-text-field>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item" v-for="item in navItems" :key="item.id">
-              <a class="nav-link" :href="item.link">{{ item.label }}</a>
+            <li class="nav-item mr-3" v-for="item in navItems" :key="item.id">
+              <router-link
+                style="text-decoration: none; color: inherit"
+                :to="item.link"
+                >{{ item.label }}
+              </router-link>
             </li>
           </ul>
         </div>
       </div>
       <div class="red-div">
-        <div class="white-circle" v-if="!isGetUserPage"></div>
+        <div class="white-circle" v-if="!isGetUserPage">
+          <v-icon size="2rem" color="#ae0000" style="padding-top: 11px">
+            mdi-account
+          </v-icon>
+        </div>
       </div>
       <div class="right-angle-triangle"></div>
       <div class="left-angle-triangle"></div>
@@ -80,9 +88,9 @@ export default {
   computed: {
     navItems() {
       let items = [
-        { id: 1, label: "Home", link: "" },
-        { id: 2, label: "Shop", link: "" },
-        { id: 3, label: "Categories", link: "" },
+        { id: 1, label: "Home", link: "/" },
+        { id: 2, label: "Shop", link: "/shop-page" },
+        { id: 3, label: "Categories", link: "/categories-page" },
         { id: 4, label: "Community", link: "" },
         { id: 5, label: "WishList", link: "" },
       ];
@@ -116,7 +124,7 @@ export default {
 .NavHeader {
   margin: 10px;
   padding-right: 30px;
-  font-size: 25px;
+  font-size: 30px;
   font-family: "Times New Roman";
   color: #494949;
   font-weight: 700;
@@ -174,6 +182,9 @@ export default {
   background-color: white;
   border-radius: 20px;
   margin: 20px auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column-reverse;
 }
 @media (max-width: 992px) {
   .centered-header {

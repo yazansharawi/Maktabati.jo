@@ -5,6 +5,7 @@ class User extends Sequelize.Model {
         return super.init(
             {
                 firstName: DataTypes.STRING,
+                image: DataTypes.STRING,
                 lastName:DataTypes.STRING,
                 nationality:DataTypes.STRING,
                 age:DataTypes.INTEGER,

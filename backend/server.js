@@ -1,6 +1,7 @@
 const express = require('express')
 const lumie = require("lumie");
 const path = require("path");
+const cors = require('cors');
 const app = express()
 const port = 3000
 
@@ -8,8 +9,21 @@ app.get('/api/health', (req, res) => {
   res.send('alive!')
 })
 
+let corsOptions;
+corsOptions = {
+  origin: '*',
+  allowedHeaders: [
+      'Origin',
+      'Content-Type',
+      'Authorization'
+  ],
+  credentials: true,
+}
+
+app.use(cors(corsOptions))
+
 lumie.load(app, {
-    preURL: 'api', // this to differ between frontend routes and backend routes
+    preURL: 'api',
     verbose: true,
     ignore: ['*.spec', '*.action', 'helper'],
     controllers_path: path.join(__dirname, 'src/controllers')

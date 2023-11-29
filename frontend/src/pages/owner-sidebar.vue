@@ -77,8 +77,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  border-radius: 20px;
-  margin: 10%;
+  border-radius: 0 20px 20px 0;
   position: relative;
 }
 

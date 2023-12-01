@@ -7,10 +7,13 @@
   <!-- <shopPage/>
       <categoriesPage/> -->
   <!-- </div> -->
-  <div>
-    <router-view />
+  <!--<div>-->
+    <!--<router-view />-->
     <!-- <OwnerDashboard/> -->
       <!-- <GetToKnowTheUser/> -->
+  <!--</div>-->
+  <div>
+    <ordersPage/>
   </div>
 </template>
 
@@ -22,6 +25,7 @@
 //  import shopPage from '../src/pages/shop-page.vue';
 // import categoriesPage from './pages/categories-page.vue';
 // import GetToKnowTheUser from '../src/pages/User-presona.vue'
+import ordersPage from './pages/orders-page.vue'
 export default {
   name: "App",
 
@@ -32,6 +36,7 @@ export default {
     // HomePage,
     // shopPage
     // categoriesPage
+    ordersPage
   },
 };
 </script>

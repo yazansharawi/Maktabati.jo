@@ -160,9 +160,10 @@ export default {
         this.selectedAuthorOptions.push(index);
       }
     },
-    finishQuestionnaire() {
-      console.log("Questionnaire completed!");
-    },
+   finishQuestionnaire() {
+  this.$router.push({ name: 'HomePage' });
+}
+
   },
   computed: {
     getProgressBarWidth() {

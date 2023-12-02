@@ -1,4 +1,5 @@
 import {  createRouter, createWebHistory } from 'vue-router';
+import store from '@/store';
 
 const routes= [
   {
@@ -10,11 +11,27 @@ const routes= [
     },
 	},
   {
-    path: '/categories-page',
+    path: '/categories',
     name: 'CategoriesPage',
 		component: () => import('@/pages/categories-page.vue'),
     meta: {
       title: 'CategoriesPage'
+    },
+	},
+  {
+    path: '/signup',
+    name: 'SignUpPage',
+		component: () => import('@/pages/sign-up-page.vue'),
+    meta: {
+      title: 'SignUpPage'
+    },
+	},
+  {
+    path: '/login',
+    name: 'logInPage',
+		component: () => import('@/pages/login-page.vue'),
+    meta: {
+      title: 'logInPage'
     },
 	},
   {
@@ -35,15 +52,15 @@ const routes= [
     },
 	},
   {
-    path: '/user-presona',
-    name: 'UserPresona',
-		component: () => import('@/pages/User-presona.vue'),
+    path: '/otp',
+    name: 'userOtp',
+		component: () => import('@/pages/otp-page.vue'),
     meta: {
-      title: 'UserPresona'
+      title: 'User Verification'
     },
 	},
   {
-    path: '/shop-page',
+    path: '/shop',
     name: 'ShopPage',
 		component: () => import('@/pages/shop-page.vue'),
     meta: {
@@ -61,6 +78,16 @@ router.afterEach((to) => {
   const routeName = to.name;
   const metaTitle = routeName ? `${routeName}` : 'Your App Name';
   document.title = metaTitle;
+});
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+  if (requiresAuth && !store.getters.isAuthenticated) {
+    next('/login-page');
+  } else {
+    next();
+  }
 });
 
 

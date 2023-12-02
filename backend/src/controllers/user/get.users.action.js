@@ -1,14 +1,11 @@
 const models = require("../../models");
 const User = models.User;
 const Review = models.Review;
-const shoppingCart = models.shoppingCart
-const purchase = models.purchase
-const post = models.post
 
-module.exports.getUsers = async (req, res) => {
+async function getUsers(req, res) {
   User.findAll({
-    where:{
-      id:1
+    where: {
+      id: 1,
     },
     include: Review,
     // include:shoppingCart,
@@ -21,4 +18,10 @@ module.exports.getUsers = async (req, res) => {
       console.log(err);
       return res.sendStatus(500);
     });
+}
+
+
+
+module.exports = {
+  getUsers,
 };

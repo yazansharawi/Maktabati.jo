@@ -9,6 +9,8 @@ app.get('/api/health', (req, res) => {
   res.send('alive!')
 })
 
+app.use(express.json());
+
 let corsOptions;
 corsOptions = {
   origin: '*',

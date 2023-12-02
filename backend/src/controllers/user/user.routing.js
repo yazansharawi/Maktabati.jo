@@ -1,11 +1,18 @@
-
-const { getUsers } = require('./get.users.action')
-
+const getActions = require("./get.users.action");
+const postActions = require("./post.users.action");
 
 module.exports = {
-    '/': {
-        get: {
-            action: getUsers
-        },
+  "/": {
+    get: {
+      action: getActions.getUsers,
     },
-}
+    post: {
+      action: postActions.createUser,
+    },
+  },
+  "/login": {
+    post: {
+      action: postActions.loginUser,
+    },
+  },
+};

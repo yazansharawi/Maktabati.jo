@@ -1,42 +1,19 @@
 <template>
-  <!-- <div> -->
-  <!-- <HomePage /> -->
-  <!-- <GetToKnowTheUser/> -->
-  <!-- <OwnerDashboard/> -->
-  <!-- <BookOverview/> -->
-  <!-- <shopPage/>
-      <categoriesPage/> -->
-  <!-- </div> -->
-  <div>
-    <router-view />
-    <!-- <OwnerDashboard/> -->
-      <!-- <GetToKnowTheUser/> -->
-  </div>
+  <v-app>
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-// import OwnerDashboard from './pages/owner-dashboard.vue'
-// import BookOverview from './pages/book-overview.vue';
-// import HelloWorld from './components/HelloWorld.vue'
-// import HomePage from "../src/pages/home-page.vue";
-//  import shopPage from '../src/pages/shop-page.vue';
-// import categoriesPage from './pages/categories-page.vue';
-// import GetToKnowTheUser from '../src/pages/User-presona.vue'
 export default {
   name: "App",
-
-  components: {
-    // BookOverview,
-    // OwnerDashboard
-    // GetToKnowTheUser
-    // HomePage,
-    // shopPage
-    // categoriesPage
-  },
 };
 </script>
+
 <style>
-div {
+html {
   font-family: "Times New Roman";
 }
 </style>

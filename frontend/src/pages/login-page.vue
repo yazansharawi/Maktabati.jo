@@ -1,227 +1,141 @@
 <template>
-  <div class="body">
-    <h1 class="title"><strong>Maktabti.Jo</strong></h1>
-    <div class="right">
-      <img src="https://ucarecdn.com/f9f58be2-9e38-4b8e-9583-d7822e68d737/" />
-    </div>
-    <div id="login-form-wrap">
-      <h2>Welcome Back</h2>
-      <form id="login-form">
-        <p>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Email Address"
-            required
-          /><i class="validation"><span></span><span></span></i>
-        </p>
-        <p>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Password"
-            required
-          /><i class="validation"><span></span><span></span></i>
-        </p>
-        <p>
-          <input type="submit" id="login" value="Login" />
-        </p>
-      </form>
-      <div id="create-account-wrap">
-        <p>Not a member? <a href="#">Create Account</a></p>
+  <div>
+    <!-- <errorDialog :model="errorDialogModel" /> -->
+    <div style="display: flex; background-color: #f3f0e9">
+      <div
+        style="
+          display: flex;
+          flex: 1;
+          align-items: center;
+          flex-direction: row-reverse;
+        "
+      >
+        <div
+          style="
+            height: auto;
+            background-color: white;
+            width: 500px;
+            border-radius: 10px;
+          "
+        >
+          <div
+            style="
+              font-weight: 400;
+              font-size: 35px;
+              line-height: 40px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100px;
+              color: #494949;
+            "
+          >
+            Welcome To Back!
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              flex-direction: row;
+              gap: 10px;
+            "
+          >
+            <v-sheet
+              width="400"
+              class="mx-auto"
+              style="display: flex; flex-direction: column; gap: 20px"
+            >
+              <v-form @submit.prevent="login">
+                <v-text-field
+                  v-model="userEmail"
+                  label="Email"
+                  :rules="[() => !!userEmail || 'This field is required']"
+                  density="compact"
+                  variant="outlined"
+                  prepend-inner-icon="mdi-email"
+                ></v-text-field>
+                <v-text-field
+                  v-model="password"
+                  :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="visible ? 'text' : 'password'"
+                  density="compact"
+                  :rules="[() => !!password || 'This field is required']"
+                  variant="outlined"
+                  prepend-inner-icon="mdi-lock"
+                  label="Enter your Password"
+                  @click:append-inner="visible = !visible"
+                  required
+                ></v-text-field>
+                <p class="text-body-2 font-weight-regular">
+                  <router-link
+                    :to="{
+                      name: 'forgetPasswordPage',
+                    }"
+                  >
+                    Forgot Password?</router-link
+                  >
+                </p>
+                <v-btn
+                  type="submit"
+                  color="#AE0000"
+                  block
+                  :disabled="!userEmail || !password"
+                  class="mt-3"
+                  elevation="0"
+                >
+                  <span style="color: white">Log In</span>
+                </v-btn>
+              </v-form>
+              <div>
+                <p class="text-body-2">
+                  Don't have an account?
+                  <router-link
+                    :to="{
+                      name: 'SignUpPage',
+                    }"
+                    >Sign Up</router-link
+                  >
+                </p>
+              </div>
+            </v-sheet>
+          </div>
+        </div>
       </div>
-      <!--create-account-wrap-->
+      <div style="display: flex; flex: 1; flex-direction: row-reverse">
+        <img
+          src="https://ucarecdn.com/f9f58be2-9e38-4b8e-9583-d7822e68d737/"
+          style="max-height: 770px"
+        />
+      </div>
     </div>
-    <!--login-form-wrap-->
-    <!-- partial -->
   </div>
 </template>
 
 <script>
 export default {
-  name: "login-page",
+  name: "LoginPage",
+  data() {
+    return {
+      userEmail: "",
+      password: "",
+      visible: false,
+    };
+  },
+
+  methods: {
+    async login() {
+      try {
+        await this.$store.dispatch("login", {
+          email: this.userEmail,
+          password: this.password,
+        });
+        this.$router.push({ name: "HomePage" });
+      } catch (error) {
+        console.error("Login Error:", error);
+      }
+    },
+  },
 };
 </script>
 
-<style scoped>
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-.title {
-  float: left;
-  position: relative;
-  left: 50px;
-  top: 20px;
-}
-body {
-  background: #f3f0e9;
-  font-size: 1.6rem;
-  font-family: "Times New Roman", Times, serif;
-  color: #2b3e51;
-}
-
-h2 {
-  font-weight: 300;
-  text-align: center;
-}
-
-p {
-  position: relative;
-}
-
-a,
-a:link,
-a:visited,
-a:active {
-  color: #3ca9e2;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-}
-a:focus,
-a:hover,
-a:link:focus,
-a:link:hover,
-a:visited:focus,
-a:visited:hover,
-a:active:focus,
-a:active:hover {
-  color: #329dd5;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-}
-img {
-  height: 640px;
-  width: auto;
-}
-.right {
-  float: right;
-}
-#login-form-wrap {
-  background-color: #fff;
-  width: 35%;
-  margin: 30px auto;
-  text-align: center;
-  padding: 20px 0 0 0;
-  border-radius: 50px;
-  box-shadow: 0px 30px 50px 0px rgba(0, 0, 0, 0.2);
-  float: left;
-  position: relative;
-  left: 50px;
-  top: 120px;
-}
-
-#login-form {
-  padding: 0 60px;
-}
-
-input {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  outline: none;
-  height: 60px;
-  line-height: 60px;
-  border-radius: 4px;
-}
-
-input[type="text"],
-input[type="email"] {
-  width: 100%;
-  padding: 0 0 0 10px;
-  margin: 0;
-  color: #8a8b8e;
-  border: 1px solid #c2c0ca;
-  font-style: normal;
-  font-size: 16px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  position: relative;
-  display: inline-block;
-  background: none;
-}
-input[type="text"]:focus,
-input[type="email"]:focus {
-  border-color: #3ca9e2;
-}
-input[type="text"]:focus:invalid,
-input[type="email"]:focus:invalid {
-  color: #cc1e2b;
-  border-color: #cc1e2b;
-}
-input[type="text"]:valid ~ .validation,
-input[type="email"]:valid ~ .validation {
-  display: block;
-  border-color: #0c0;
-}
-input[type="text"]:valid ~ .validation span,
-input[type="email"]:valid ~ .validation span {
-  background: #0c0;
-  position: absolute;
-  border-radius: 6px;
-}
-input[type="text"]:valid ~ .validation span:first-child,
-input[type="email"]:valid ~ .validation span:first-child {
-  top: 30px;
-  left: 14px;
-  width: 20px;
-  height: 3px;
-  -webkit-transform: rotate(-45deg);
-  transform: rotate(-45deg);
-}
-input[type="text"]:valid ~ .validation span:last-child,
-input[type="email"]:valid ~ .validation span:last-child {
-  top: 35px;
-  left: 8px;
-  width: 11px;
-  height: 3px;
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-
-.validation {
-  display: none;
-  position: absolute;
-  content: " ";
-  height: 60px;
-  width: 30px;
-  right: 15px;
-  top: 0px;
-}
-
-input[type="submit"] {
-  border: none;
-  display: block;
-  background-color: #8e0000;
-  color: #fff;
-  font-weight: bold;
-  text-transform: uppercase;
-  cursor: pointer;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-  font-size: 18px;
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  text-align: center;
-}
-input[type="submit"]:hover {
-  background-color: #329dd5;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-}
-
-#create-account-wrap {
-  background-color: #eeedf1;
-  color: #8a8b8e;
-  font-size: 14px;
-  width: 100%;
-  padding: 10px 0;
-  border-radius: 0 0 50px 50px;
-}
-</style>
+<style scoped></style>

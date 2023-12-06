@@ -1,272 +1,318 @@
 <template>
-  <div class="body">
-    <h1 class="title"><strong>Maktabti.Jo</strong></h1>
-    <div class="right">
-      <img src="https://ucarecdn.com/f9f58be2-9e38-4b8e-9583-d7822e68d737/" />
-    </div>
-    <div id="login-form-wrap">
-      <h2>Create an Account</h2>
-      <form id="login-form">
-        <p>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Email Address"
-            required
-          /><i class="validation"><span></span><span></span></i>
-        </p>
-        <p>
-          <input
-            type="text"
-            id="password"
-            name="password"
-            placeholder="Password"
-            required
-          /><i class="validation"><span></span><span></span></i>
-        </p>
-        <p>
-          <input
-            type="text"
-            id="password"
-            name="password"
-            placeholder="Confirm Password"
-            required
-          /><i class="validation"><span></span><span></span></i>
-        </p>
-        <div class="questionOptions">
-          <v-btn
-            v-for="(option, index) in bookTypeOptions"
-            :key="index"
-            elevation="0"
-            @click="toggleAuthorOption(index)"
-            :class="{
-              'rounded-option': true,
-              'selected-option': selectedAuthorOptions.includes(index),
-            }"
+  <div>
+    <errorDialog :model="errorDialogVisible" @update:model="errorDialogVisible = $event" />
+    <div style="display: flex; background-color: #f3f0e9">
+      <div
+        style="
+          display: flex;
+          flex: 1;
+          align-items: center;
+          flex-direction: row-reverse;
+        "
+      >
+        <div
+          style="
+            height: auto;
+            background-color: white;
+            width: 500px;
+            border-radius: 10px;
+          "
+        >
+          <div
+            style="
+              font-weight: 400;
+              font-size: 35px;
+              line-height: 40px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100px;
+              color: #494949;
+            "
           >
-            {{ option }}
-          </v-btn>
-        </div>
+            Welcome To Maktabti.Jo!
+          </div>
+          <div
+            style="display: flex; justify-content: center; flex-direction: row"
+          >
+            <v-sheet
+              width="400"
+              class="mx-auto"
+              style="display: flex; flex-direction: column"
+            >
+              <v-form fast-fail @submit.prevent="signIn">
+                <v-text-field
+                  v-model="userFirstName"
+                  label="Enter your First Name"
+                  density="compact"
+                  :rules="[() => !!userFirstName || 'This field is required']"
+                  variant="outlined"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="userLastName"
+                  label="Enter your family Name"
+                  density="compact"
+                  :rules="[() => !!userLastName || 'This field is required']"
+                  variant="outlined"
+                  required
+                ></v-text-field>
 
-        <p>
-          By creating an account you agree to our
-          <a href="#">Terms & Privacy</a>.
-        </p>
-        <p>
-          <input type="submit" id="login" value="Login" />
-        </p>
-      </form>
-      <div class="create-account-wrap">
-        <p>Already have an account? <a href="#">Log in</a></p>
+                <v-text-field
+                  v-model="userPassword"
+                  :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="visible ? 'text' : 'password'"
+                  density="compact"
+                  variant="outlined"
+                  :rules="[
+                    () => !!userPassword || 'This field is required',
+                    (v) =>
+                      (v && v.length >= 10) ||
+                      'Password must be at least 10 characters',
+                  ]"
+                  label="Enter your Password"
+                  @click:append-inner="visible = !visible"
+                  required
+                ></v-text-field>
+
+                <v-text-field
+                  v-model="userPhoneNumber"
+                  label="Phone Number"
+                  density="compact"
+                  variant="outlined"
+                  :rules="phoneRules"
+                ></v-text-field>
+
+                <v-text-field
+                  v-model="userEmail"
+                  density="compact"
+                  label="Enter your Email"
+                  :rules="[
+                    () => !!userEmail || 'This field is required',
+                    () =>
+                      (userEmail && userEmail.includes('@')) ||
+                      'Email must contain @',
+                  ]"
+                  variant="outlined"
+                  required
+                ></v-text-field>
+
+                <v-autocomplete
+                  v-model="userCountry"
+                  :rules="[() => !!userCountry || 'This field is required']"
+                  :items="$countries"
+                  label="Country"
+                  placeholder="Select..."
+                  required
+                  density="compact"
+                  variant="outlined"
+                ></v-autocomplete>
+
+                <v-text-field
+                  v-model="userDateOfBirth"
+                  density="compact"
+                  placeholder="MM-DD-YY"
+                  label="Enter your BirthDate"
+                  :rules="[
+                    () => !!userDateOfBirth || 'This field is required',
+                    (v) =>
+                      /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/.test(
+                        v
+                      ) || 'Date must be in MM-DD-YYYY format',
+                  ]"
+                  variant="outlined"
+                  required
+                ></v-text-field>
+
+                <div
+                  style="display: flex; justify-content: center; gap: 10px"
+                  class="mb-2"
+                >
+                  <v-btn
+                    v-model="userType"
+                    value="regularUser"
+                    elevation="0"
+                    @click="setUserType('regularUser')"
+                    :class="{
+                      'active-btn': userType === 'regularUser',
+                      'inactive-btn': userType !== 'regularUser',
+                    }"
+                    rounded="x-large"
+                  >
+                    <v-icon
+                      :color="userType === 'regularUser' ? 'white' : 'white'"
+                      class="mr-2"
+                      >mdi-account</v-icon
+                    >
+                    <span
+                      :style="{
+                        color: userType === 'regularUser' ? 'white' : 'white',
+                      }"
+                      >Regular User</span
+                    >
+                  </v-btn>
+                  <v-btn
+                    v-model="userType"
+                    value="owner"
+                    elevation="0"
+                    @click="setUserType('owner')"
+                    :class="{
+                      'active-btn': userType === 'owner',
+                      'inactive-btn': userType !== 'owner',
+                    }"
+                    rounded="x-large"
+                  >
+                    <v-icon
+                      :color="userType === 'owner' ? 'white' : 'white'"
+                      class="mr-1"
+                      >mdi-store</v-icon
+                    >
+                    <span
+                      :style="{
+                        color: userType === 'owner' ? 'white' : 'white',
+                      }"
+                      >BookStore Owner</span
+                    >
+                  </v-btn>
+                </div>
+                <v-btn
+                  type="submit"
+                  :color="
+                    !userFirstName ||
+                    !userLastName ||
+                    !userPassword ||
+                    !userEmail ||
+                    !userCountry
+                      ? '#808080'
+                      : '#AE0000'
+                  "
+                  block
+                  :disabled="!isValidForm"
+                  class="mt-3"
+                  elevation="0"
+                >
+                  <span style="color: white">Sign Up</span></v-btn
+                >
+              </v-form>
+              <div class="mt-2">
+                <p class="text-body-2">
+                  Already have an account?
+                  <router-link
+                    :to="{
+                      name: 'logInPage',
+                    }"
+                    >Log In</router-link
+                  >
+                </p>
+              </div>
+            </v-sheet>
+          </div>
+        </div>
       </div>
-      <!--create-account-wrap-->
+      <div style="display: flex; flex: 1; flex-direction: row-reverse">
+        <img
+          src="https://ucarecdn.com/f9f58be2-9e38-4b8e-9583-d7822e68d737/"
+          style="max-height: 770px"
+        />
+      </div>
     </div>
-    <!--login-form-wrap-->
-    <!-- partial -->
   </div>
 </template>
 
 <script>
+import errorDialog from "../components/dialogs/eventsDialog.vue";
 export default {
   name: "SignupPage",
-  components: {},
-  data() {
-    return {};
+  components: {
+    errorDialog,
   },
-  methods: {},
-  computed: {},
+  data() {
+    return {
+      //User Info
+      userPassword: null,
+      userFirstName: null,
+      userLastName: null,
+      userEmail: null,
+      userType: null,
+      userDateOfBirth: null,
+      userPhoneNumber: null,
+      userCountry: null,
+      errorDialogVisible:false,
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
+      visible: false,
+      menu: false,
+      phoneRules: [
+        (v) => !!v || "Phone number is required",
+        (v) => /^\+\d+$/.test(v) || "Phone number must start with +",
+      ],
+    };
+  },
+  computed: {
+    isValidEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(this.userEmail);
+    },
+    isValidForm() {
+      return (
+        this.userFirstName &&
+        this.userLastName &&
+        this.userPassword &&
+        this.isValidEmail &&
+        this.userCountry &&
+        this.userPhoneNumber &&
+        this.userDateOfBirth
+      );
+    },
+  },
+  methods: {
+    setUserType(type) {
+      this.userType = type;
+    },
+    async signIn() {
+      try {
+        let data = {
+          userPassword: this.userPassword,
+          userFirstName: this.userFirstName,
+          userLastName: this.userLastName,
+          userEmail: this.userEmail,
+          userDateOfBirth: this.userDateOfBirth,
+          userType: this.userType,
+          userPhoneNumber: this.userPhoneNumber,
+          userCountry: this.userCountry,
+        };
+
+        const response = await this.$axios.post("user", data);
+        if (response.status === 201) {
+          this.$store.dispatch("signUpSuccess", {
+            user: response.data.user,
+            token: response.data.token,
+            userUuid:response.data.userUuid
+          });
+          this.$router.push({
+            name: "userOtp",
+            params: { uuid: response.data.userUuid },
+          });
+        } else {
+          this.errorDialogVisible = true
+        }
+      } catch (error) {
+        this.errorDialogVisible = true
+        console.error("Error during sign-up:", error);
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-.title {
-  float: left;
-  position: relative;
-  left: 50px;
-  top: 20px;
-}
-body {
-  background: #f3f0e9;
-  font-size: 1.6rem;
-  font-family: "Times New Roman", Times, serif;
-  color: #2b3e51;
-}
-h2 {
-  font-weight: 300;
-  text-align: center;
+.active-btn {
+  background-color: #ae0000 !important;
 }
 
-p {
-  position: relative;
-}
-img {
-  height: 640px;
-  width: auto;
-}
-.right {
-  float: right;
-}
-#login-form-wrap {
-  background-color: #fff;
-  width: 35%;
-  margin: 30px auto;
-  text-align: center;
-  padding: 20px 0 0 0;
-  border-radius: 50px;
-  box-shadow: 0px 30px 50px 0px rgba(0, 0, 0, 0.2);
-  float: left;
-  position: relative;
-  left: 50px;
-  top: 40px;
-}
-
-#login-form {
-  padding: 0 60px;
-}
-
-input {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  outline: none;
-  height: 60px;
-  line-height: 60px;
-  border-radius: 4px;
-}
-select {
-  width: 100%;
-  height: 100%;
-  padding: 0 0 0 10px;
-  margin: 0;
-  color: #8a8b8e;
-  border: 1px solid #c2c0ca;
-  font-style: normal;
-  font-size: 16px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  position: relative;
-  display: inline-block;
-  background: none;
-}
-input[type="text"],
-input[type="email"] {
-  width: 100%;
-  padding: 0 0 0 10px;
-  margin: 0;
-  color: #8a8b8e;
-  border: 1px solid #c2c0ca;
-  font-style: normal;
-  font-size: 16px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  position: relative;
-  display: inline-block;
-  background: none;
-}
-input[type="text"]:focus,
-input[type="email"]:focus {
-  border-color: #3ca9e2;
-}
-input[type="text"]:focus:invalid,
-input[type="email"]:focus:invalid {
-  color: #cc1e2b;
-  border-color: #cc1e2b;
-}
-.questionOptions {
-  text-align: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 20px;
-  padding-top: 20px;
-  justify-content: center;
-}
-input[type="text"]:valid ~ .validation,
-input[type="email"]:valid ~ .validation {
-  display: block;
-  border-color: #0c0;
-}
-input[type="text"]:valid ~ .validation span,
-input[type="email"]:valid ~ .validation span {
-  background: #0c0;
-  position: absolute;
-  border-radius: 6px;
-}
-input[type="text"]:valid ~ .validation span:first-child,
-input[type="email"]:valid ~ .validation span:first-child {
-  top: 30px;
-  left: 14px;
-  width: 20px;
-  height: 3px;
-  -webkit-transform: rotate(-45deg);
-  transform: rotate(-45deg);
-}
-input[type="text"]:valid ~ .validation span:last-child,
-input[type="email"]:valid ~ .validation span:last-child {
-  top: 35px;
-  left: 8px;
-  width: 11px;
-  height: 3px;
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-
-.validation {
-  display: none;
-  position: absolute;
-  content: " ";
-  height: 60px;
-  width: 30px;
-  right: 15px;
-  top: 0px;
-}
-.rounded-option {
-  background-color: white;
-  color: black;
-  border-radius: 10px;
-  border: 1px solid black;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.selected-option {
-  background-color: #8e0000;
-  border-radius: 10px;
-  border: 1px solid black;
-  color: white;
-}
-
-input[type="submit"] {
-  border: none;
-  display: block;
-  background-color: #8e0000;
-  color: #fff;
-  font-weight: bold;
-  text-transform: uppercase;
-  cursor: pointer;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-  font-size: 18px;
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  text-align: center;
-}
-input[type="submit"]:hover {
-  background-color: #329dd5;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-}
-
-.create-account-wrap {
-  background-color: #eeedf1;
-  color: #8a8b8e;
-  font-size: 14px;
-  width: 100%;
-  padding: 10px 0;
-  border-radius: 0 0 50px 50px;
+.inactive-btn {
+  background-color: #808080 !important;
+  color: white !important;
 }
 </style>

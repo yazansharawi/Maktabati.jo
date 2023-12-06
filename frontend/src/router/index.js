@@ -1,4 +1,11 @@
 import {  createRouter, createWebHistory } from 'vue-router';
+import store from '@/store';
+
+// import { useAuthGuard } from '../../middleware/guards';
+
+
+// const guards = useAuthGuard();
+
 
 const routes= [
   {
@@ -6,15 +13,33 @@ const routes= [
     name: 'HomePage',
 		component: () => import('@/pages/home-page.vue'),
     meta: {
-      title: 'HomePage'
+      title: 'HomePage',
+      requiresAuth: true, 
     },
 	},
   {
-    path: '/categories-page',
+    path: '/categories',
     name: 'CategoriesPage',
 		component: () => import('@/pages/categories-page.vue'),
     meta: {
-      title: 'CategoriesPage'
+      title: 'CategoriesPage',
+      requiresAuth: true, 
+    },
+	},
+  {
+    path: '/signup',
+    name: 'SignUpPage',
+		component: () => import('@/pages/sign-up-page.vue'),
+    meta: {
+      title: 'SignUpPage'
+    },
+	},
+  {
+    path: '/login',
+    name: 'logInPage',
+		component: () => import('@/pages/login-page.vue'),
+    meta: {
+      title: 'logInPage'
     },
 	},
   {
@@ -22,7 +47,8 @@ const routes= [
     name: 'BookOverView',
 		component: () => import('@/pages/book-overview.vue'),
     meta: {
-      title: 'BookOverView'
+      title: 'BookOverView',
+      requiresAuth: true, 
     },
     props: true,
 	},
@@ -31,24 +57,55 @@ const routes= [
     name: 'UserPresona',
 		component: () => import('@/pages/User-presona.vue'),
     meta: {
-      title: 'UserPresona'
+      title: 'UserPresona',
+      requiresAuth: true, 
     },
+    // beforeEnter: (to, from, next) => {
+    //   if (guards.isAuthenticated() && guards.isOTPVerified()) {
+    //     next();
+    //   }
+    // },
 	},
   {
-    path: '/user-presona',
-    name: 'UserPresona',
-		component: () => import('@/pages/User-presona.vue'),
+    path: '/otp/:uuid',
+    name: 'userOtp',
+    component: () => import('@/pages/otp-page.vue'),
     meta: {
-      title: 'UserPresona'
+      title: 'User Verification',
+      requiresAuth: true, 
     },
-	},
+    props: true,
+  },
   {
-    path: '/shop-page',
+    path: '/shop',
     name: 'ShopPage',
 		component: () => import('@/pages/shop-page.vue'),
     meta: {
-      title: 'ShopPage'
+      title: 'ShopPage',
+      requiresAuth: true, 
     },
+	},
+  {
+    path: '/forgetPassword',
+    name: 'forgetPasswordPage',
+		component: () => import('@/pages/forget-password-page.vue'),
+    meta: {
+      title: 'Forget Password Page',
+    },
+	},
+  {
+    path: '/ownerDashboard',
+    name: 'ownerDashboard',
+		component: () => import('@/pages/owner-dashboard.vue'),
+    meta: {
+      title: 'Owner Dashboard',
+      requiresAuth: true, 
+    },
+    // beforeEnter: (to, from, next) => {
+    //   if (guards.isAuthenticated() && guards.isOwner()) {
+    //     next();
+    //   }
+    // },
 	},
 ];
 
@@ -61,6 +118,16 @@ router.afterEach((to) => {
   const routeName = to.name;
   const metaTitle = routeName ? `${routeName}` : 'Your App Name';
   document.title = metaTitle;
+});
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+  if (requiresAuth && !store.getters.isAuthenticated) {
+    next('/login');
+  } else {
+    next();
+  }
 });
 
 

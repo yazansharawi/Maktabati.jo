@@ -58,10 +58,48 @@
         </div>
       </div>
       <div class="red-div">
-        <div class="white-circle" v-if="!isGetUserPage">
-          <v-icon size="2rem" color="#ae0000" style="padding-top: 11px">
-            mdi-account
-          </v-icon>
+        <div v-if="!isGetUserPage">
+          <v-container fluid>
+            <v-row justify="center">
+              <v-menu min-width="200px" rounded>
+                <template v-slot:activator="{ props }">
+                  <v-btn icon v-bind="props" elevation="0">
+                    <v-avatar size="large">
+                      <v-icon
+                        size="2.3rem"
+                        color="#ae0000"
+                        style="padding-top: 25px"
+                      >
+                        mdi-account
+                      </v-icon></v-avatar
+                    >
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-text>
+                    <div class="mx-auto text-center">
+                      <v-avatar>
+                        <img
+                          style="height: 50px; border-radius: 40px"
+                          :src="this.user.image"
+                        />
+                      </v-avatar>
+                      <h3>{{ this.user.firstName + this.user.lastName }}</h3>
+                      <p class="text-caption mt-1">
+                        {{ this.user.email }}
+                      </p>
+                      <v-divider class="my-3"></v-divider>
+                      <v-btn rounded variant="text"> Edit Account </v-btn>
+                      <v-divider class="my-3"></v-divider>
+                      <v-btn rounded variant="text" @click="logout">
+                        Log Out
+                      </v-btn>
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </v-menu>
+            </v-row>
+          </v-container>
         </div>
       </div>
       <div class="right-angle-triangle"></div>
@@ -76,6 +114,7 @@ export default {
   data() {
     return {
       isMobile: false,
+      user: null,
     };
   },
   props: {
@@ -89,8 +128,8 @@ export default {
     navItems() {
       let items = [
         { id: 1, label: "Home", link: "/" },
-        { id: 2, label: "Shop", link: "/shop-page" },
-        { id: 3, label: "Categories", link: "/categories-page" },
+        { id: 2, label: "Shop", link: "/shop" },
+        { id: 3, label: "Categories", link: "/categories" },
         { id: 4, label: "Community", link: "" },
         { id: 5, label: "WishList", link: "" },
       ];
@@ -103,6 +142,9 @@ export default {
     },
   },
   mounted() {
+    this.$store.dispatch("checkAuthentication");
+    const userProxy = this.$store.getters.user;
+    this.user = Object.assign({}, userProxy);
     this.checkScreenSize();
     window.addEventListener("resize", this.checkScreenSize);
   },
@@ -110,6 +152,11 @@ export default {
     window.removeEventListener("resize", this.checkScreenSize);
   },
   methods: {
+    async logout() {
+      await this.$store.dispatch("logout");
+
+      this.$router.push({ name: "logInPage" });
+    },
     checkScreenSize() {
       this.isMobile = window.innerWidth <= 992;
     },
@@ -159,6 +206,9 @@ export default {
   height: 90px;
   background-color: #ae0000;
   margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .right-angle-triangle {
   margin-top: 130px;

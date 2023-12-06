@@ -2,11 +2,14 @@
   <div class="main-div">
     <Nav :isGetUserPage="true" />
     <div class="progress-bar-container">
-      <div class="progress-bar" :style="{ width: getProgressBarWidth }"></div>
+      <div class="progress-bar" :style="{ width: getProgressBarWidth }" />
     </div>
     <div v-if="introDiv" class="welcome-div">
       <p class="firstHeader welcome-animation">
-        Welcome Yazan Sharawi, So happy that you are here!
+        Welcome
+        <span style="color:#AE0000">{{
+          $store.getters.user.firstName + " " + $store.getters.user.lastName
+        }}</span>, So happy that you are here with us!
       </p>
       <p class="secHeader welcome-animation">
         Before you go and explore the world of Maktabti, we would like to get to
@@ -34,10 +37,10 @@
           v-for="(option, index) in $genreOptions"
           :key="index"
           elevation="0"
-          @click="toggleGenreOption(index)"
+          @click="toggleGenreOption(option)"
           :class="{
             'rounded-option': true,
-            'selected-option': selectedGenreOptions.includes(index),
+            'selected-option': selectedGenreOptions.includes(option),
           }"
         >
           {{ option }}
@@ -48,10 +51,10 @@
           v-for="(option, index) in $authorOptions"
           :key="index"
           elevation="0"
-          @click="toggleAuthorOption(index)"
+          @click="toggleAuthorOption(option)"
           :class="{
             'rounded-option': true,
-            'selected-option': selectedAuthorOptions.includes(index),
+            'selected-option': selectedAuthorOptions.includes(option),
           }"
         >
           {{ option }}
@@ -62,10 +65,10 @@
           v-for="(option, index) in $bookTypeOptions"
           :key="index"
           elevation="0"
-          @click="toggleAuthorOption(index)"
+          @click="BookTypeOption(option)"
           :class="{
             'rounded-option': true,
-            'selected-option': selectedAuthorOptions.includes(index),
+            'selected-option': selectedBookTypeOptions.includes(option),
           }"
         >
           {{ option }}
@@ -76,10 +79,10 @@
           v-for="(option, index) in $bookAgeOptions"
           :key="index"
           elevation="0"
-          @click="bookAgeOptions(index)"
+          @click="bookAgeOptions(option)"
           :class="{
             'rounded-option': true,
-            'selected-option': selectedbookAgeOptions.includes(index),
+            'selected-option': selectedbookAgeOptions.includes(option),
           }"
         >
           {{ option }}
@@ -111,7 +114,6 @@
       </v-btn>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -120,8 +122,6 @@ export default {
   name: "GetToKnowUser",
   components: {
     Nav,
-  },
-  created() {
   },
   data() {
     return {
@@ -133,6 +133,8 @@ export default {
       selectedAuthorOptions: [],
       selectedBookTypeOptions: [],
       selectedbookAgeOptions: [],
+      userFirstName: null,
+      userLastName: null,
     };
   },
   methods: {
@@ -142,26 +144,64 @@ export default {
     goToPrevStep() {
       this.currentStep--;
     },
-    toggleGenreOption(index) {
-      if (this.selectedGenreOptions.includes(index)) {
+    toggleGenreOption(option) {
+      if (this.selectedGenreOptions.includes(option)) {
         this.selectedGenreOptions = this.selectedGenreOptions.filter(
-          (item) => item !== index
+          (item) => item !== option
         );
       } else {
-        this.selectedGenreOptions.push(index);
+        this.selectedGenreOptions.push(option);
       }
     },
-    toggleAuthorOption(index) {
-      if (this.selectedAuthorOptions.includes(index)) {
+    BookTypeOption(option) {
+      if (this.selectedBookTypeOptions.includes(option)) {
+        this.selectedBookTypeOptions = this.selectedBookTypeOptions.filter(
+          (item) => item !== option
+        );
+      } else {
+        this.selectedBookTypeOptions.push(option);
+      }
+    },
+    toggleAuthorOption(option) {
+      if (this.selectedAuthorOptions.includes(option)) {
         this.selectedAuthorOptions = this.selectedAuthorOptions.filter(
-          (item) => item !== index
+          (item) => item !== option
         );
       } else {
-        this.selectedAuthorOptions.push(index);
+        this.selectedAuthorOptions.push(option);
       }
     },
+    bookAgeOptions(option) {
+      if (this.selectedbookAgeOptions.includes(option)) {
+        this.selectedbookAgeOptions = this.selectedbookAgeOptions.filter(
+          (item) => item !== option
+        );
+      } else {
+        this.selectedbookAgeOptions.push(option);
+      }
+    },
+
     finishQuestionnaire() {
-      console.log("Questionnaire completed!");
+      try {
+        let data = {
+          userFavoriteGenres: this.selectedGenreOptions,
+          userFavoriteAuthors: this.selectedAuthorOptions,
+          userFavoriteBookType: this.selectedBookTypeOptions,
+          userFavoriteBookAge: this.selectedbookAgeOptions,
+        };
+        this.$axios
+          .put("user/user-preferences/" + this.$store.getters.user.uuid, data)
+          .then(async (response) => {
+            if (response.status == 200) {
+              this.$router.push({ name: "HomePage" });
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+          });
+      } catch (er) {
+        console.log(er);
+      }
     },
   },
   computed: {

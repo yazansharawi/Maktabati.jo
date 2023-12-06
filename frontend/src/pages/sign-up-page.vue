@@ -1,5 +1,6 @@
 <template>
   <div>
+    <errorDialog :model="errorDialogVisible" @update:model="errorDialogVisible = $event" />
     <div style="display: flex; background-color: #f3f0e9">
       <div
         style="
@@ -80,9 +81,8 @@
                   density="compact"
                   variant="outlined"
                   :rules="phoneRules"
-                  @input="formatPhoneNumber"
                 ></v-text-field>
-                
+
                 <v-text-field
                   v-model="userEmail"
                   density="compact"
@@ -98,9 +98,8 @@
                 ></v-text-field>
 
                 <v-autocomplete
-                  ref="country"
-                  v-model="country"
-                  :rules="[() => !!country || 'This field is required']"
+                  v-model="userCountry"
+                  :rules="[() => !!userCountry || 'This field is required']"
                   :items="$countries"
                   label="Country"
                   placeholder="Select..."
@@ -109,30 +108,21 @@
                   variant="outlined"
                 ></v-autocomplete>
 
-                <v-menu
-                  v-model="menu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="userDateOfBirth"
-                      label="DateOfBirth"
-                      readonly
-                      v-bind="attrs"
-                      density="compact"
-                      variant="outlined"
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="userDateOfBirth"
-                    @input="menu = false"
-                  ></v-date-picker>
-                </v-menu>
+                <v-text-field
+                  v-model="userDateOfBirth"
+                  density="compact"
+                  placeholder="MM-DD-YY"
+                  label="Enter your BirthDate"
+                  :rules="[
+                    () => !!userDateOfBirth || 'This field is required',
+                    (v) =>
+                      /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/.test(
+                        v
+                      ) || 'Date must be in MM-DD-YYYY format',
+                  ]"
+                  variant="outlined"
+                  required
+                ></v-text-field>
 
                 <div
                   style="display: flex; justify-content: center; gap: 10px"
@@ -174,7 +164,7 @@
                   >
                     <v-icon
                       :color="userType === 'owner' ? 'white' : 'white'"
-                      class="mr-2"
+                      class="mr-1"
                       >mdi-store</v-icon
                     >
                     <span
@@ -185,9 +175,6 @@
                     >
                   </v-btn>
                 </div>
-                <a href="#" class="text-body-2 font-weight-regular"
-                  >Forgot Password?</a
-                >
                 <v-btn
                   type="submit"
                   :color="
@@ -195,13 +182,13 @@
                     !userLastName ||
                     !userPassword ||
                     !userEmail ||
-                    !country
+                    !userCountry
                       ? '#808080'
                       : '#AE0000'
                   "
                   block
                   :disabled="!isValidForm"
-                  class="mt-2"
+                  class="mt-3"
                   elevation="0"
                 >
                   <span style="color: white">Sign Up</span></v-btn
@@ -233,9 +220,12 @@
 </template>
 
 <script>
+import errorDialog from "../components/dialogs/eventsDialog.vue";
 export default {
   name: "SignupPage",
-  components: {},
+  components: {
+    errorDialog,
+  },
   data() {
     return {
       //User Info
@@ -247,12 +237,15 @@ export default {
       userDateOfBirth: null,
       userPhoneNumber: null,
       userCountry: null,
-
+      errorDialogVisible:false,
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
       visible: false,
       menu: false,
       phoneRules: [
         (v) => !!v || "Phone number is required",
-        (v) => /^[0-9+]*$/.test(v) || "Only numbers and + are allowed",
+        (v) => /^\+\d+$/.test(v) || "Phone number must start with +",
       ],
     };
   },
@@ -267,8 +260,9 @@ export default {
         this.userLastName &&
         this.userPassword &&
         this.isValidEmail &&
-        this.country &&
-        this.userPhoneNumber
+        this.userCountry &&
+        this.userPhoneNumber &&
+        this.userDateOfBirth
       );
     },
   },
@@ -286,16 +280,25 @@ export default {
           userDateOfBirth: this.userDateOfBirth,
           userType: this.userType,
           userPhoneNumber: this.userPhoneNumber,
-          userCountry: this.country,
+          userCountry: this.userCountry,
         };
 
         const response = await this.$axios.post("user", data);
         if (response.status === 201) {
-          this.$router.push({ name: "userOtp" });
+          this.$store.dispatch("signUpSuccess", {
+            user: response.data.user,
+            token: response.data.token,
+            userUuid:response.data.userUuid
+          });
+          this.$router.push({
+            name: "userOtp",
+            params: { uuid: response.data.userUuid },
+          });
         } else {
-          console.error("Error during sign-up:", response.data);
+          this.errorDialogVisible = true
         }
       } catch (error) {
+        this.errorDialogVisible = true
         console.error("Error during sign-up:", error);
       }
     },

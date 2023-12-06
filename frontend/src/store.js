@@ -18,11 +18,20 @@ const store = createStore({
     },
   },
   actions: {
-    loginSuccess({ commit }, { user, token }) {
+    signUpSuccess({ commit }, { user, token, userUuid }) {
       commit("SET_AUTHENTICATED", true);
-      commit("SET_USER", user);
+      commit("SET_USER", { ...user, uuid: userUuid });
+      localStorage.setItem("user", JSON.stringify({ ...user, uuid: userUuid }));
+      localStorage.setItem(TOKEN_KEY, token);
+    },
+    
 
-      localStorage.setItem("user", JSON.stringify(user));
+    loginSuccess({ commit }, { user, token, uuid }) {
+      const userWithUuid = { ...user, uuid };
+    
+      commit("SET_AUTHENTICATED", true);
+      commit("SET_USER", userWithUuid);
+      localStorage.setItem("user", JSON.stringify(userWithUuid));
       localStorage.setItem(TOKEN_KEY, token);
     },
     logout({ commit }) {
@@ -32,23 +41,26 @@ const store = createStore({
     },
     async login({ commit }, { email, password }) {
       try {
-        const response = await axios.post("user/login", {
-          email,
-          password,
-        });
-
-        const { user, token } = response.data;
-
+        const response = await axios.post("user/login", { email, password });
+        const { user, token, uuid } = response.data;
+    
+        user.uuid = uuid;
+    
         commit("SET_AUTHENTICATED", true);
         commit("SET_USER", user);
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem(TOKEN_KEY, token);
-
+    
         router.push({ name: "HomePage" });
       } catch (error) {
-        console.error("Login failed:", error);
+        let errorMessage = "Login failed";
+        if (error.response && error.response.status === 401) {
+          errorMessage = "Invalid credentials";
+        }
+        console.error(errorMessage, error);
+        throw new Error(errorMessage);
       }
-    },
+    },    
     checkAuthentication({ commit }) {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
@@ -76,6 +88,7 @@ const store = createStore({
   },
 });
 
+store.dispatch("checkAuthentication");
 export function useStore() {
   return baseUseStore();
 }

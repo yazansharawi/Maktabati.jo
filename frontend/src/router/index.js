@@ -1,13 +1,20 @@
 import {  createRouter, createWebHistory } from 'vue-router';
 import store from '@/store';
 
+// import { useAuthGuard } from '../../middleware/guards';
+
+
+// const guards = useAuthGuard();
+
+
 const routes= [
   {
     path: '/',
     name: 'HomePage',
 		component: () => import('@/pages/home-page.vue'),
     meta: {
-      title: 'HomePage'
+      title: 'HomePage',
+      requiresAuth: true, 
     },
 	},
   {
@@ -15,7 +22,8 @@ const routes= [
     name: 'CategoriesPage',
 		component: () => import('@/pages/categories-page.vue'),
     meta: {
-      title: 'CategoriesPage'
+      title: 'CategoriesPage',
+      requiresAuth: true, 
     },
 	},
   {
@@ -39,7 +47,8 @@ const routes= [
     name: 'BookOverView',
 		component: () => import('@/pages/book-overview.vue'),
     meta: {
-      title: 'BookOverView'
+      title: 'BookOverView',
+      requiresAuth: true, 
     },
     props: true,
 	},
@@ -48,24 +57,55 @@ const routes= [
     name: 'UserPresona',
 		component: () => import('@/pages/User-presona.vue'),
     meta: {
-      title: 'UserPresona'
+      title: 'UserPresona',
+      requiresAuth: true, 
     },
+    // beforeEnter: (to, from, next) => {
+    //   if (guards.isAuthenticated() && guards.isOTPVerified()) {
+    //     next();
+    //   }
+    // },
 	},
   {
-    path: '/otp',
+    path: '/otp/:uuid',
     name: 'userOtp',
-		component: () => import('@/pages/otp-page.vue'),
+    component: () => import('@/pages/otp-page.vue'),
     meta: {
-      title: 'User Verification'
+      title: 'User Verification',
+      requiresAuth: true, 
     },
-	},
+    props: true,
+  },
   {
     path: '/shop',
     name: 'ShopPage',
 		component: () => import('@/pages/shop-page.vue'),
     meta: {
-      title: 'ShopPage'
+      title: 'ShopPage',
+      requiresAuth: true, 
     },
+	},
+  {
+    path: '/forgetPassword',
+    name: 'forgetPasswordPage',
+		component: () => import('@/pages/forget-password-page.vue'),
+    meta: {
+      title: 'Forget Password Page',
+    },
+	},
+  {
+    path: '/ownerDashboard',
+    name: 'ownerDashboard',
+		component: () => import('@/pages/owner-dashboard.vue'),
+    meta: {
+      title: 'Owner Dashboard',
+      requiresAuth: true, 
+    },
+    // beforeEnter: (to, from, next) => {
+    //   if (guards.isAuthenticated() && guards.isOwner()) {
+    //     next();
+    //   }
+    // },
 	},
 ];
 
@@ -84,7 +124,7 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (requiresAuth && !store.getters.isAuthenticated) {
-    next('/login-page');
+    next('/login');
   } else {
     next();
   }

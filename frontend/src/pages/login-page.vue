@@ -12,7 +12,7 @@
       >
         <div
           style="
-            height: 400px;
+            height: auto;
             background-color: white;
             width: 500px;
             border-radius: 10px;
@@ -45,7 +45,7 @@
               class="mx-auto"
               style="display: flex; flex-direction: column; gap: 20px"
             >
-              <v-form @submit.prevent="handleLogin">
+              <v-form @submit.prevent="login">
                 <v-text-field
                   v-model="userEmail"
                   label="Email"
@@ -66,9 +66,15 @@
                   @click:append-inner="visible = !visible"
                   required
                 ></v-text-field>
-                <a href="#" class="text-body-2 font-weight-regular"
-                  >Forgot Password?</a
-                >
+                <p class="text-body-2 font-weight-regular">
+                  <router-link
+                    :to="{
+                      name: 'forgetPasswordPage',
+                    }"
+                  >
+                    Forgot Password?</router-link
+                  >
+                </p>
                 <v-btn
                   type="submit"
                   color="#AE0000"
@@ -80,7 +86,7 @@
                   <span style="color: white">Log In</span>
                 </v-btn>
               </v-form>
-              <div class="mt-2">
+              <div>
                 <p class="text-body-2">
                   Don't have an account?
                   <router-link
@@ -106,44 +112,28 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { useStore } from "../store";
-// import errorDialog from "../components/dialogs/eventsDialog.vue";
-
 export default {
   name: "LoginPage",
   data() {
     return {
+      userEmail: "",
+      password: "",
       visible: false,
     };
   },
 
-  // components: {
-  //   errorDialog,
-  // },
-  setup() {
-    const store = useStore();
-    
-
-    const userEmail = ref(null);
-    const password = ref(null);
-
-    const handleLogin = async () => {
+  methods: {
+    async login() {
       try {
-        await store.dispatch("login", {
-          email: userEmail.value,
-          password: password.value,
+        await this.$store.dispatch("login", {
+          email: this.userEmail,
+          password: this.password,
         });
+        this.$router.push({ name: "HomePage" });
       } catch (error) {
-        console.log("error", error);
+        console.error("Login Error:", error);
       }
-    };
-
-    return {
-      userEmail,
-      password,
-      handleLogin,
-    };
+    },
   },
 };
 </script>

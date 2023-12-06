@@ -1,43 +1,55 @@
 <template>
   <div>
-    <v-sheet
-      border
-      class="pt-8 pb-12 px-6 ma-4 mx-auto"
-      max-width="350"
-      width="100%"
+    <!-- <Nav :isGetUserPage="true" /> -->
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f3f0e9;
+      "
     >
-      <h3 class="text-h6 mb-1">Mobile phone verification</h3>
+      <v-sheet
+        border
+        class="pt-8 pb-8 px-8 ma-4 mx-auto"
+        max-width="350"
+        width="100%"
+      >
+        <h3 class="text-h6 mb-1">Account verification</h3>
 
-      <div class="text-body-2 font-weight-light">
-        Enter the code we just sent to your mobile phone
-        <span class="font-weight-black text-primary">+1 408 555 1212</span>
-      </div>
+        <div class="text-body-2 font-weight-light">
+          Enter the code we just sent to your Email
+          <span class="font-weight-black text-primary">{{
+            $store.getters.user.email
+          }}</span>
+        </div>
 
-      <v-otp-input
-        v-model="otp"
-        class="mt-3 ms-n2"
-        placeholder="0"
-        length="4"
-        variant="underlined"
-      ></v-otp-input>
+        <v-otp-input
+          v-model="otp"
+          class="mt-3 ms-n2"
+          placeholder="0"
+          length="6"
+          variant="underlined"
+        ></v-otp-input>
 
-
-      <v-divider class="mt-3 mb-6"></v-divider>
-
-      <div class="mb-3 text-body-2">Need another <strong>code</strong>?</div>
-
-      <v-btn
-        color="primary"
-        size="small"
-        text="Re-send Email"
-        variant="tonal"
-        @click="verifyOtp"
-      ></v-btn>
-    </v-sheet>
+        <v-divider class="mt-3 mb-6"></v-divider>
+        <div style="display: flex; justify-content: center">
+          <v-btn
+            color="#AE0000"
+            block
+            text="Verify"
+            elevation="0"
+            @click="verifyOtp"
+          ></v-btn>
+        </div>
+      </v-sheet>
+    </div>
   </div>
 </template>
 
 <script>
+// import Nav from "../components/Navs/main-navbar.vue";
 export default {
   name: "OtpPage",
   data() {
@@ -45,9 +57,29 @@ export default {
       otp: "",
     };
   },
+  // components: {
+  //   Nav,
+  // },
   methods: {
-    verifyOtp() {
-      console.log("hi");
+    async verifyOtp() {
+      try {
+        const userUuid = this.$route.params.uuid;
+
+        const response = await this.$axios.post("user/verify-otp/" + userUuid, {
+          otp: this.otp,
+        });
+        if (response.status === 200 && response.data.verified) {
+          if (response.data.userType === "regularUser") {
+            this.$router.push({ name: "UserPresona" });
+          } else {
+            this.$router.push({ name: "ownerDashboard" });
+          }
+        } else {
+          console.error("OTP verification failed");
+        }
+      } catch (error) {
+        console.error("Error during OTP verification:", error);
+      }
     },
   },
 };

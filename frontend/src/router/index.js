@@ -50,6 +50,14 @@ const routes= [
       title: 'ShopPage'
     },
 	},
+  {
+    path: '/orders',
+    name: 'Orders',
+		component: () => import('@/pages/orders-page.vue'),
+    meta: {
+      title: 'OrdersPage'
+    },
+	},
 ];
 
 const router = createRouter({

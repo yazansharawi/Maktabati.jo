@@ -94,6 +94,12 @@ const routes= [
     },
 	},
   {
+    path: '/orders',
+    name: 'Orders',
+		component: () => import('@/pages/orders-page.vue'),
+    meta: {
+      title: 'OrdersPage'
+    },
     path: '/ownerDashboard',
     name: 'ownerDashboard',
 		component: () => import('@/pages/owner-dashboard.vue'),

@@ -1,15 +1,18 @@
 const models = require("../../models");
 const User = models.User;
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
-
+const { internalAxios } = require("../../services/axios");
+const { differenceInYears, parse } = require("date-fns");
 const secretKey = crypto.randomBytes(32).toString("hex");
+const {
+  sendVerificationEmail,
+  sendForgetPasswordOTP,
+} = require("../../services/emailService");
 
 async function isValidCredentials(email, password) {
   const user = await User.findOne({ where: { email } });
-  return user && user.validPassword(password);
+  return user && (await user.validPassword(password));
 }
 
 async function getUserData(email) {
@@ -23,10 +26,8 @@ async function getUserData(email) {
 
 async function loginUser(req, res) {
   const { email, password } = req.body;
-
   try {
     const isValid = await isValidCredentials(email, password);
-
     if (isValid) {
       const user = await getUserData(email);
 
@@ -46,6 +47,20 @@ async function loginUser(req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+function generateToken(user) {
+  const Key = process.env.JWT_SECRET || secretKey;
+  const token = jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+    },
+    Key,
+    {
+      expiresIn: "1h",
+    }
+  );
+  return token;
+}
 
 async function createUser(req, res) {
   try {
@@ -60,12 +75,14 @@ async function createUser(req, res) {
       userPhoneNumber,
     } = req.body;
 
-    const hashedPassword = await bcrypt.hash(userPassword, 10);
+    const dob = parse(userDateOfBirth, "MM-dd-yyyy", new Date());
+
+    const age = differenceInYears(new Date(), dob);
 
     const otp = Math.floor(100000 + Math.random() * 900000);
 
     const newUser = await User.create({
-      password: hashedPassword,
+      password: userPassword,
       firstName: userFirstName,
       lastName: userLastName,
       type: userType,
@@ -73,30 +90,110 @@ async function createUser(req, res) {
       country: userCountry,
       phoneNumber: userPhoneNumber,
       otp: otp,
+      age: age,
+      dateOfBirth: userDateOfBirth,
     });
+    const token = generateToken(newUser);
+    await sendVerificationEmail(userEmail, otp);
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
-      port: 587,
-      auth: {
-        user: 'fernando.hodkiewicz78@ethereal.email',
-        pass: 'pTxDqyCxM8W1xW821K',
-      },
+    let userUuid = await internalAxios.get("user/by-id/" + newUser.id);
+
+    const userData = {
+      uuid: newUser.uuid,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+    };
+    res.status(201).json({
+      message: "User created successfully",
+      userUuid: userUuid.data.uuid,
+      user: userData,
+      token: token,
     });
-
-    const info = await transporter.sendMail({
-      from: '"MaktabtiJo@gmail.com',
-      to: userEmail,
-      subject: "OTP Verification",
-      text: `Your OTP for verification is: ${otp}`,
-    });
-
-
-    res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser });
   } catch (error) {
     console.error("Error creating user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+async function verifyOtpUserByUuid(req, res) {
+  try {
+    const userUuid = req.params.uuid;
+    const enteredOtp = req.body.otp;
+
+    const user = await User.findOne({ where: { uuid: userUuid } });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const isOtpValid = enteredOtp === user.otp;
+
+    if (isOtpValid) {
+      return res.status(200).json({ verified: true, userType: user.type });
+    } else {
+      return res.status(200).json({ verified: false });
+    }
+  } catch (error) {
+    console.error("Error during OTP verification:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+async function userForgetPassword(req, res) {
+  const { userEmail } = req.body;
+
+  const otp = Math.floor(100000 + Math.random() * 900000);
+
+  try {
+    const user = await User.findOne({
+      where: { email: userEmail },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (user.otpSent) {
+      return res.status(400).json({ error: "OTP already sent" });
+    }
+
+    await sendForgetPasswordOTP(userEmail, otp);
+
+    user.otp = otp;
+    user.otpSent = true;
+    await user.save();
+
+    res.status(200).json({ message: "OTP sent successfully" });
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+async function resetPassword(req, res) {
+  const { userEmail, otp, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({
+      where: { email: userEmail },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+
+    user.password = newPassword;
+    user.otpSent = false;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error("Error resetting password:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
@@ -104,4 +201,7 @@ async function createUser(req, res) {
 module.exports = {
   createUser,
   loginUser,
+  verifyOtpUserByUuid,
+  userForgetPassword,
+  resetPassword
 };

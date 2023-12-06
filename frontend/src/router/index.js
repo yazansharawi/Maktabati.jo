@@ -100,6 +100,8 @@ const routes= [
     meta: {
       title: 'OrdersPage'
     },
+  },
+  {
     path: '/ownerDashboard',
     name: 'ownerDashboard',
 		component: () => import('@/pages/owner-dashboard.vue'),

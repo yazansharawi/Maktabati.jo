@@ -27,23 +27,24 @@
               display: flex;
               justify-content: space-between;
             "
-            class="pl-4"
+            class="px-2"
           >
             <div style="display: inline-block; text-align: left">
               <v-icon size="1.3rem" color="#494949" class="mb-1 mr-1"
                 >mdi-filter</v-icon
               ><span style="font-size: 20px; color: #494949">Filters</span>
             </div>
-            <div
-              style="
-                font-size: 15px;
-                padding-top: 5px;
-                color: #494949;
-                padding-right: 15px;
-              "
+            <v-btn
+              style="font-size: 10px"
+              elevation="0"
+              color="#AE0000"
+              @click="getBooks()"
+              density="compact"
+              prepend-icon="mdi-magnify"
+              class="mt-1"
             >
-              clear
-            </div>
+              Search
+            </v-btn>
           </div>
           <v-expansion-panels>
             <v-expansion-panel elevation="0" style="background-color: #f3f0e9">
@@ -152,7 +153,7 @@
               <v-expansion-panel-text>
                 <div style="max-height: 250px; overflow-y: auto">
                   <div
-                    v-for="(Gener, index) in genreOptions"
+                    v-for="(Gener, index) in $genreOptions"
                     :key="index"
                     style="display: flex"
                     class="mb-1"
@@ -200,7 +201,7 @@
               <v-expansion-panel-text>
                 <div style="max-height: 250px; overflow-y: auto">
                   <div
-                    v-for="(Author, index) in authorOptions"
+                    v-for="(Author, index) in $authorOptions"
                     :key="index"
                     style="display: flex"
                     class="mb-1"
@@ -240,16 +241,25 @@
             </v-expansion-panel>
           </v-expansion-panels>
         </div>
+        <div class="px-2">
+          <v-btn
+            block
+            style="font-size: 15px"
+            elevation="0"
+            color="#AE0000"
+            @click="resetFilter()"
+            class="mt-3"
+            :disabled="enableClearButton"
+          >
+            Clear
+          </v-btn>
+        </div>
       </div>
       <div class="right-div">
         <div class="results-header">Results</div>
         <div class="book-grid">
           <div v-for="index in 20" :key="index">
-            <div
-              style="display: flex; flex-direction: column; gap: 2px"
-              @mouseenter="showButtons[index] = true"
-              @mouseleave="showButtons[index] = false"
-            >
+            <div style="display: flex; flex-direction: column; gap: 2px">
               <div
                 style="
                   height: 220px;
@@ -266,31 +276,6 @@
                   alt="Book Image"
                   style="height: 220px; width: 170px"
                 />
-                <div
-                  v-if="showButtons[index]"
-                  style="
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 15px;
-                    position: absolute;
-                  "
-                >
-                  <div
-                    v-for="button in buttons"
-                    :key="button.text"
-                    style="display: flex; align-items: center; gap: 10px"
-                  >
-                    <v-btn
-                      elevation="0"
-                      :prepend-icon="button.icon"
-                      :style="button.style"
-                      class="add-btn"
-                    >
-                      {{ button.text }}
-                    </v-btn>
-                  </div>
-                </div>
               </div>
               <div style="display: flex">
                 <div class="mr-5" style="font-size: 15px">A Choice Of God</div>
@@ -321,125 +306,20 @@ import StarRating from "vue-star-rating";
 import Footer from "../components/Footer/footer.vue";
 export default {
   name: "ShopPage",
-
+  components: {
+    Nav,
+    StarRating,
+    Footer,
+  },
+  created() {
+    this.getBooks();
+  },
   data() {
     return {
       showDiv: false,
-      buttons: [
-        {
-          text: "View",
-          icon: "mdi-eye",
-          style: "width: 120px; font-size: 10px",
-        },
-        {
-          text: "Add WishList",
-          icon: "mdi-plus",
-          style: "width: 120px; font-size: 10px",
-        },
-        {
-          text: "Add to Cart",
-          icon: "mdi-cart",
-          style: "width: 120px; font-size: 10px",
-        },
-      ],
-      showButtons: new Array(20).fill(false),
-      ratings: [4, 3, 2, 1],
+      enableClearButton:false,
+      ratings: [4, 3, 2, 1, 5],
       Conditions: ["New ", "Used"],
-      genreOptions: [
-        "Fiction",
-        "Non-Fiction",
-        "Mystery",
-        "Romance",
-        "Fantasy",
-        "Science Fiction",
-        "Biography",
-        "Thriller",
-        "Horror",
-        "Historical Fiction",
-        "Young Adult",
-        "Self-Help",
-        "Poetry",
-        "Graphic Novels",
-        "Classic Literature",
-        "Adventure",
-        "Humor",
-        "Dystopian",
-        "Memoir",
-        "Contemporary",
-        "Science",
-        "Travel",
-        "Religion",
-        "Psychology",
-        "Art",
-        "History",
-        "Parenting",
-        "Business",
-        "Philosophy",
-        "Politics",
-        "Children's",
-        "Short Stories",
-        "Essay Collections",
-        "Educational",
-        "Self-Development",
-        "True Crime",
-        "Western",
-        "Romantic Suspense",
-        "Paranormal",
-        "Mythology",
-        "Steampunk",
-        "Drama",
-        "Science Fantasy",
-        "Sports",
-        "War",
-        "Detective",
-        "Urban Fantasy",
-        "Cyberpunk",
-        "Time Travel",
-        "Supernatural",
-        "Other",
-      ],
-      authorOptions: [
-        "J.K. Rowling",
-        "Stephen King",
-        "Agatha Christie",
-        "George R.R. Martin",
-        "Jane Austen",
-        "Dan Brown",
-        "Neil Gaiman",
-        "Tolkien",
-        "Terry Pratchett",
-        "Haruki Murakami",
-        "Mark Twain",
-        "H.P. Lovecraft",
-        "Charles Dickens",
-        "Gabriel Garcia Marquez",
-        "Khaled Hosseini",
-        "Leo Tolstoy",
-        "Arthur Conan Doyle",
-        "J.R.R. Tolkien",
-        "Victor Hugo",
-        "Oscar Wilde",
-        "Fyodor Dostoevsky",
-        "Virginia Woolf",
-        "Ray Bradbury",
-        "Hermann Hesse",
-        "Ernest Hemingway",
-        "Albert Camus",
-        "Agatha Christie",
-        "Jules Verne",
-        "J.D. Salinger",
-        "Jane Austen",
-        "Mary Shelley",
-        "George Orwell",
-        "Emily Dickinson",
-        "Leo Tolstoy",
-        "Charles Dickens",
-        "Toni Morrison",
-        "Edgar Allan Poe",
-        "Oscar Wilde",
-        "F. Scott Fitzgerald",
-        "Walt Whitman",
-      ],
       Audiences: ["Childern", "Adults", "Young Adults"],
       Languages: ["Arabic", "English", "Other"],
       bookTypes: ["Paper Books", "eBooks"],
@@ -480,11 +360,23 @@ export default {
     toggleDiv() {
       this.showDiv = !this.showDiv;
     },
-  },
-  components: {
-    Nav,
-    StarRating,
-    Footer,
+    getBooks() {
+      this.enableClearButton = true;
+      let data = {
+        bookCondition: this.checkedConditions,
+        bookRating: this.ratings,
+        bookAudience: this.checkedAudience,
+        bookLanguage: this.checkedLanguages,
+        bookType: this.checkedBookType,
+        sortBooksBy: this.checkedSort,
+        bookGener: this.checkedGeners,
+        bookAuthor: this.checkedAuthors,
+      };
+      console.log("data", data);
+    },
+    resetFilter() {
+      console.log("reset");
+    },
   },
 };
 </script>

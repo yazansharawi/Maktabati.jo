@@ -34,7 +34,7 @@ app.config.globalProperties.$store = store;
 
 app.use(router);
 app.use(vuetify);
-app.use(store); // Use Vuex store once
+app.use(store);
 
 app.mount('#app');
 

@@ -148,9 +148,21 @@ async function getBookWithOffer(req, res) {
   }
 }
 
+async function getBooks(req,res){
+  try {
+    console.log("hi")
+    return
+    return res.send(books);
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(500);
+  }
+}
+
 module.exports = {
   getBooksByGenre,
   getBookById,
   getBestSellersBooks,
   getBookWithOffer,
+  getBooks
 };

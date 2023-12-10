@@ -6,6 +6,9 @@ module.exports = {
     post: {
       action: postActions.createNewBooks,
     },
+    get:{
+      action: getActions.getBooks
+    }
   },
   "/by-genre/:genre": {
     get: {

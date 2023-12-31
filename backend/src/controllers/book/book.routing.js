@@ -30,4 +30,14 @@ module.exports = {
       action: getActions.getBookWithOffer,
     },
   },
+  "/get-Books-genre":{
+    get: {
+      action: getActions.getAllGenres,
+    },
+  },
+  "/get-Books-by-name/:bookName":{
+    get: {
+      action: getActions.getBookByName,
+    },
+  }
 };

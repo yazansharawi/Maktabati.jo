@@ -19,14 +19,28 @@
             With Our Editors
           </div>
 
-          <!-- <div class="header-search">
-          <div class="search-container">
-            <div class="red-box">hi</div>
-            <div class="search-btn">
-              <v-btn class="rounded-btn" elevation="0">hi</v-btn>
+          <div class="search-field">
+            <input
+              type="text"
+              v-model="searchQuery"
+              @input="handleSearch"
+              class="search-input"
+              placeholder="Book Name"
+            />
+            <div class="dropdown" v-if="showDropdown">
+              <div v-if="searchResults.length > 0">
+                <div
+                  class="dropdown-item"
+                  v-for="book in searchResults"
+                  :key="book"
+                  @click="goToBook(book)"
+                >
+                  {{ book.title }}
+                </div>
+              </div>
+              <div class="dropdown-item" v-else>No Results Found</div>
             </div>
           </div>
-        </div> -->
         </div>
 
         <div class="right-div">
@@ -44,7 +58,9 @@
           />
         </div>
       </div>
-
+      <div v-if="!bestSellersData">
+        <v-progress-circular indeterminate></v-progress-circular>
+      </div>
       <!-- BestSellers list-->
       <BookLists
         :background-color="'white'"
@@ -55,6 +71,11 @@
 
       <!-- Offers list-->
       <!-- for now we will use :isOffer prop , but in the future we will get the offers from the api -->
+
+      <div v-if="!hasOfferData">
+        <v-progress-circular indeterminate></v-progress-circular>
+      </div>
+
       <BookLists
         :background-color="'#F3F0E9'"
         :sectionName="'Offers'"
@@ -63,11 +84,16 @@
         :isHomePage="true"
       />
 
-      <!-- Based On Search-->
+      <div v-if="!this.$userLastFiveSearches">
+        <v-progress-circular indeterminate></v-progress-circular>
+      </div>
+
       <BookLists
+        v-else
         :background-color="'white'"
         :sectionName="'Based On Your Search'"
         :isHomePage="true"
+        :books="this.$userLastFiveSearches.books"
       />
 
       <AboutAuthors :authors="authors" />
@@ -96,6 +122,9 @@ export default {
       bestSellersData: null,
       hasOfferData: null,
       authors: null,
+      searchQuery: "",
+      searchResults: [],
+      showDropdown: false,
     };
   },
   created() {
@@ -110,6 +139,34 @@ export default {
     window.removeEventListener("resize", this.handleResize);
   },
   methods: {
+    async handleSearch() {
+      if (this.searchQuery.length > 2) {
+        try {
+          const response = await this.$axios.get(
+            `/book/get-Books-by-name/${this.searchQuery}`
+          );
+          this.searchResults = response.data;
+          this.showDropdown = true;
+        } catch (error) {
+          console.error(error);
+          this.searchResults = [];
+          this.showDropdown = false;
+        }
+      } else {
+        this.searchResults = [];
+        this.showDropdown = false;
+      }
+    },
+    goToBook(book) {
+      if (book && book.genre) {
+        this.$axios.put(
+          `user/user-recent-searches/${this.$store.getters.user.uuid}`,
+          { genre: book.genre }
+        );
+      }
+      this.$router.push({ name: "BookOverView", params: { id: book.id } });
+      this.showDropdown = false;
+    },
     handleResize() {
       this.isWideScreen = window.innerWidth >= 992;
     },
@@ -143,6 +200,36 @@ export default {
 </script>
 
 <style scoped>
+.search-input {
+  width: 100%;
+  padding: 5px;
+  border: #494949 1px solid;
+  font-size: 20px;
+  border-radius: 10px;
+}
+.search-field {
+  width: 60%;
+  margin-top: 20px;
+}
+.dropdown {
+  position: absolute;
+  background-color: #f6f6f6;
+  width: 29%;
+  border: 1px solid #ddd;
+  z-index: 100;
+  border-radius: 10px;
+}
+.dropdown-item {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  font-size: 30px;
+  border-radius: 10px;
+}
+
+.dropdown-item:hover {
+  background-color: #eee;
+}
 .main-container {
   display: flex;
   width: 100%;
@@ -194,6 +281,7 @@ export default {
   padding-top: 20px;
   padding-left: 7px;
   color: #494949;
+  line-height: 30px;
 }
 
 .red-box {
@@ -227,6 +315,12 @@ export default {
   align-items: center;
 }
 @media (max-width: 991.98px) {
+  .dropdown {
+    width: 90%;
+  }
+  .search-field {
+    width: 100%;
+  }
   .main-container {
     flex-direction: column;
     align-items: center;

@@ -36,6 +36,10 @@ class User extends Sequelize.Model {
           type: DataTypes.ARRAY(DataTypes.STRING),
           allowNull: true,
         },
+        BasedOnYourSearch: {
+          type: DataTypes.ARRAY(DataTypes.STRING),
+          allowNull: true,
+        },
       },
       {
         tableName: "users",
@@ -55,10 +59,10 @@ class User extends Sequelize.Model {
   static associate(models) {
     this.myAssociations = this.hasMany(models.Review, { foreignKey: "userId" });
     this.myAssociations = this.hasMany(models.purchase, {
-      foreignKey: "userId",
+      foreignKey: "userUuid",
     });
     this.myAssociations = this.hasMany(models.shoppingCart, {
-      foreignKey: "userId",
+      foreignKey: "userUuid",
     });
     this.myAssociations = this.hasMany(models.post, { foreignKey: "userId" });
     this.myAssociations = this.hasMany(models.userCommunity, {
@@ -66,7 +70,7 @@ class User extends Sequelize.Model {
     });
     this.myAssociations = this.hasMany(models.order, { foreignKey: "userId" });
     this.myAssociations = this.hasMany(models.wishList, {
-      foreignKey: "userId",
+      foreignKey: "userUuid",
     });
   }
   async validPassword(password) {

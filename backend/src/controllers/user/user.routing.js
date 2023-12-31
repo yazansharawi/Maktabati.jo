@@ -31,6 +31,11 @@ module.exports = {
       action: putActions.addUserPreferences,
     },
   },
+  "/user-recent-searches/:uuid": {
+    put: {
+      action: putActions.addUserLastFiveSearches,
+    },
+  },
   "/forget-password": {
     post: {
       action: postActions.userForgetPassword,
@@ -39,6 +44,21 @@ module.exports = {
   "/reset-password": {
     post: {
       action: postActions.resetPassword,
+    },
+  },
+  "/based-on-the-user-searches/:uuid": {
+    get: {
+      action: getActions.getUserlastSearches,
+    },
+  },
+  "/by-uuid/:uuid": {
+    get: {
+      action: getActions.getUserByUuid,
+    },
+  },
+  "/update-by-uuid/:uuid": {
+    post: {
+      action: postActions.updateUserInfoByUuid,
     },
   },
 };

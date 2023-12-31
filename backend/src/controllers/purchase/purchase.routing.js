@@ -1,11 +1,10 @@
-
-const { getPurchase } = require('./get.purchase.action')
-
+const getActions = require("./get.actions");
+const postActions = require("./post.actions");
 
 module.exports = {
-    '/': {
-        get: {
-            action: getPurchase
-        },
+  "/create-new-purchase-by-user-uuid/:uuid": {
+    post: {
+      action: postActions.addPurchaseByUserUuid,
     },
-}
+  },
+};

@@ -198,10 +198,36 @@ async function resetPassword(req, res) {
   }
 }
 
+async function updateUserInfoByUuid(req, res) {
+  const userUuid = req.params.uuid;
+  const { firstName, lastName, email, phoneNumber } = req.body.data;
+
+  try {
+    const user = await User.findOne({ where: { uuid: userUuid } });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    await user.update({
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+    });
+
+    res.status(200).json({ message: "User information updated successfully" });
+  } catch (error) {
+    console.error("Error updating user info:", error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
   verifyOtpUserByUuid,
   userForgetPassword,
-  resetPassword
+  resetPassword,
+  updateUserInfoByUuid,
 };

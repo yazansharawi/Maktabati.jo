@@ -3,7 +3,12 @@
     <div :style="{ backgroundColor: backgroundColor }" class="main-container">
       <div class="headers-container">
         <div class="list-header">{{ sectionName }}</div>
-        <div class="see-all-header">See all</div>
+        <router-link
+          class="see-all-header"
+          :to="{ name: 'ShopPage' }"
+          style="text-decoration: none; color: inherit"
+          >See all</router-link
+        >
       </div>
       <div class="books-scroll-container">
         <div class="books-container">
@@ -13,7 +18,11 @@
             :style="style(isOffer)"
           >
             <router-link
-              :to="{ name: 'BookOverView', params: { id: book.id },query: { isHomePage: isHomePage.toString() } }"
+              :to="{
+                name: 'BookOverView',
+                params: { id: book.id },
+                query: { isHomePage: isHomePage.toString() },
+              }"
               style="text-decoration: none; color: inherit"
             >
               <div class="book-cover-container">
@@ -60,8 +69,9 @@
                   prepend-icon="mdi-bag-personal"
                   elevation="0"
                   class="add-btn"
+                  @click="handleWishList(book.id)"
                 >
-                  Add
+                  {{ wishListStatus[book.id] ? "added" : "add to WishList" }}
                 </v-btn>
               </div>
             </div>
@@ -75,6 +85,10 @@
 <script>
 export default {
   name: "BookList",
+  components: {},
+  mounted() {
+    this.processWishListData();
+  },
   computed: {
     style() {
       return function (status) {
@@ -124,9 +138,62 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      wishList: {},
+      wishListStatus: {},
+    };
   },
-  methods: {},
+  methods: {
+    waitForWishListData() {
+      return new Promise((resolve) => {
+        setTimeout(resolve, 2000);
+      });
+    },
+    async processWishListData() {
+      if (Array.isArray(this.$wishListPerUser)) {
+        this.$wishListPerUser.forEach((item) => {
+          this.wishListStatus[item.bookId] = !item.deletedAt;
+        });
+      } else {
+        console.log("Waiting for wishlist data to be loaded");
+        await this.waitForWishListData();
+        this.processWishListData();
+      }
+    },
+    handleWishList(bookId) {
+      if (this.wishListStatus[bookId]) {
+        this.removeFromWishList(bookId);
+      } else {
+        this.addToWishList(bookId);
+      }
+    },
+    addToWishList(bookId) {
+      this.$axios
+        .post(
+          `wish-list/add-to-wishlist-by-uuid/${this.$store.getters.user.uuid}`,
+          { bookId }
+        )
+        .then(() => {
+          this.wishListStatus = { ...this.wishListStatus, [bookId]: true };
+        })
+        .catch((error) => {
+          console.error("Error adding to wishlist:", error);
+        });
+    },
+    removeFromWishList(bookId) {
+      this.$axios
+        .put(
+          `wish-list/delete-wishlist-by-user-uuid/${this.$store.getters.user.uuid}`,
+          { bookId }
+        )
+        .then(() => {
+          this.wishListStatus = { ...this.wishListStatus, [bookId]: false };
+        })
+        .catch((error) => {
+          console.error("Error removing from wishlist:", error);
+        });
+    },
+  },
 };
 </script>
 
@@ -203,6 +270,7 @@ export default {
   background: #ae0000;
   border-radius: 5px;
   color: white;
+  font-size: 12px;
 }
 
 .add-btn .v-icon {

@@ -4,10 +4,11 @@ class wishList extends Sequelize.Model {
     static init(sequelize, DataTypes) {
         return super.init(
             {
-                userId: DataTypes.INTEGER,
+                userUuid: DataTypes.STRING,
                 deletedAt:DataTypes.DATE,
                 createdAt: DataTypes.DATE,
                 updatedAt:DataTypes.DATE,
+                bookId:DataTypes.INTEGER,
             },
             {
                 tableName: 'wish_List',

@@ -23,4 +23,9 @@ module.exports = {
       action:getActions.getAuthorById
     }
   },
+  "/get-authors":{
+    get:{
+      action:getActions.getAuthors
+    }
+  },
 };

@@ -24,6 +24,9 @@ class book extends Sequelize.Model {
         updatedAt: DataTypes.DATE,
         deletedAt: DataTypes.DATE,
         targetedPeopleText: DataTypes.STRING,
+        bookCondition: DataTypes.STRING,
+        targetedPeople: DataTypes.STRING,
+        storeId:DataTypes.INTEGER,
       },
       {
         tableName: "books",
@@ -33,6 +36,7 @@ class book extends Sequelize.Model {
   }
   static associate(models) {
     this.belongsTo(models.author, { foreignKey: "authorId" });
+    this.belongsTo(models.bookStore, { foreignKey: "storeId" });
     this.hasMany(models.inThisBook, { foreignKey: "bookId" });
     this.hasMany(models.topics, { foreignKey: "bookId" });
     this.hasMany(models.Review, { foreignKey: "bookId" });

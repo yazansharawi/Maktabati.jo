@@ -1,7 +1,21 @@
 <template>
   <div>
+    <RentBookDialog
+      :model="DialogVisible"
+      @update:model="(DialogVisible = $event), (this.eventDialog = true)"
+      :bookInfo="this.book"
+    />
+    <eventDialog
+      :model="eventDialog"
+      @update:model="eventDialog = $event"
+      :eventType="status"
+    />
     <div v-if="!this.book">
-      <v-skeleton-loader color="secondary" type="paragraph"></v-skeleton-loader>
+      <v-skeleton-loader
+        type="article"
+        v-for="n in 10"
+        :key="n"
+      ></v-skeleton-loader>
     </div>
     <div v-else>
       <bookOverviewNavbarVue
@@ -59,11 +73,29 @@
                 margin-bottom: 50px;
               "
             >
-              <v-btn elevation="0" color="#4C6B8A" class="mr-10">
-                <span style="color: white"> Read Demo</span>
+              <v-btn
+                elevation="0"
+                color="#4C6B8A"
+                class="mr-10"
+                @click="DialogVisible = true"
+                :disabled="isRented"
+              >
+                <v-icon size="1rem" class="mr-1"> mdi-book </v-icon>
+                <span style="color: white" v-if="!isRented">
+                  Rent this Book</span
+                >
+                <span style="color: white" v-else> Rented</span>
               </v-btn>
-              <v-btn elevation="0" color="#AE0000">
-                <span style="color: white"> Buy Now</span>
+              <v-btn
+                elevation="0"
+                color="#AE0000"
+                @click="addToShopCart()"
+                :disabled="this.addedToShopCart"
+              >
+                <v-icon size="1rem" class="mr-1"> mdi-cart </v-icon>
+                <span style="color: white">
+                  {{ this.addedToShopCart ? "Added" : "Add to Cart" }}</span
+                >
               </v-btn>
             </div>
           </div>
@@ -127,6 +159,8 @@ import divsSection from "../components/divs-section.vue";
 import authorSection from "../components/author-section.vue";
 import topicsSection from "../components/topics-section.vue";
 import BookInfoSection from "../components/Book-components/Book-info-section.vue";
+import RentBookDialog from "../components/dialogs/rentBookDialog.vue";
+import eventDialog from "../components/dialogs/eventsDialog.vue";
 export default {
   name: "BookOverview",
 
@@ -137,17 +171,50 @@ export default {
     topicsSection,
     BookInfoSection,
     Footer,
+    RentBookDialog,
+    eventDialog,
   },
   created() {
     this.getBookInfo();
+    this.shoppingCartStatus();
   },
   data() {
     return {
       tags: [],
       book: null,
+      DialogVisible: false,
+      bookRentalStatus: {},
+      isRented: false,
+      addedToShopCart: false,
+      status: null,
+      eventDialog: false,
     };
   },
+  mounted() {
+    window.scrollTo(0, 0);
+  },
+  watch: {
+    book(newVal) {
+      if (newVal) {
+        this.updateRentalStatus();
+        this.shoppingCartStatus();
+      }
+    },
+  },
   methods: {
+    updateRentalStatus() {
+      console.log("userRentedBooks",this.$userRentedBooks)
+      if (this.book && Array.isArray(this.$userRentedBooks)) {
+        this.isRented = this.$userRentedBooks.includes(this.book.id);
+      }
+      this.status = "rented";
+    },
+    shoppingCartStatus() {
+      if (this.book && Array.isArray(this.$userShoppingCart)) {
+        this.addedToShopCart = this.$userShoppingCart.includes(this.book.id);
+      }
+    },
+
     navClicked(item) {
       if (item === "About") {
         this.scrollToSection("discoverInsightsSection");
@@ -177,6 +244,24 @@ export default {
         .then(async (response) => {
           this.tags = response.data.tags;
           this.book = response.data.book;
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    },
+    addToShopCart() {
+      let data = {
+        bookId: this.book.id,
+        storeId: this.book.storeId,
+      };
+      this.$axios
+        .post(
+          `shopping-cart/add-to-shop-cart-by-user-uuid/${this.$store.getters.user.uuid}`,
+          data
+        )
+        .then(() => {
+          this.eventDialog = true;
+          this.status = "addedToCart";
         })
         .catch((error) => {
           console.error("Error fetching data:", error);

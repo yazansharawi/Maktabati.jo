@@ -38,12 +38,13 @@
               style="font-size: 10px"
               elevation="0"
               color="#AE0000"
-              @click="getBooks()"
+              @click="resetFilter()"
               density="compact"
               prepend-icon="mdi-magnify"
               class="mt-1"
+              v-if="enableClearButton"
             >
-              Search
+              Clear
             </v-btn>
           </div>
           <v-expansion-panels>
@@ -84,62 +85,12 @@
                   style="display: flex"
                   class="mb-1 pa-0"
                 >
-                  <v-btn elevation="0" color="#f3f0e9" class="pa-0">
-                    <star-rating
-                      :show-rating="false"
-                      :read-only="true"
-                      :star-size="15"
-                      :increment="0.5"
-                      v-model="ratings[index]"
-                    />
-                    <div>& Up</div>
-                  </v-btn>
-                </div>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-            <v-expansion-panel elevation="0" style="background-color: #f3f0e9">
-              <v-expansion-panel-title
-                expand-icon="mdi-plus"
-                collapse-icon="mdi-minus"
-              >
-                Book Type
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <div
-                  v-for="(type, index) in bookTypes"
-                  :key="index"
-                  style="display: flex"
-                  class="mb-1"
-                >
                   <input
                     type="checkbox"
-                    v-model="checkedBookType[index]"
+                    v-model="ratingsSelected[index]"
                     class="mr-2"
                   />
-                  {{ type }}
-                </div>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-            <v-expansion-panel elevation="0" style="background-color: #f3f0e9">
-              <v-expansion-panel-title
-                expand-icon="mdi-plus"
-                collapse-icon="mdi-minus"
-              >
-                Language
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <div
-                  v-for="(Language, index) in Languages"
-                  :key="index"
-                  style="display: flex"
-                  class="mb-1"
-                >
-                  <input
-                    type="checkbox"
-                    v-model="checkedLanguages[index]"
-                    class="mr-2"
-                  />
-                  {{ Language }}
+                  {{ ratings[index] }} Star Book
                 </div>
               </v-expansion-panel-text>
             </v-expansion-panel>
@@ -247,18 +198,17 @@
             style="font-size: 15px"
             elevation="0"
             color="#AE0000"
-            @click="resetFilter()"
+            @click="getBooks()"
             class="mt-3"
-            :disabled="enableClearButton"
           >
-            Clear
+            Search
           </v-btn>
         </div>
       </div>
       <div class="right-div">
         <div class="results-header">Results</div>
-        <div class="book-grid">
-          <div v-for="index in 20" :key="index">
+        <div class="book-grid" v-if="paginatedBooks && !loader">
+          <div v-for="(book, index) in paginatedBooks" :key="index">
             <div style="display: flex; flex-direction: column; gap: 2px">
               <div
                 style="
@@ -271,29 +221,68 @@
                   align-items: center;
                 "
               >
-                <img
-                  src="https://ucarecdn.com/472f5659-20c0-4135-be84-8b7534ed5c0c/ego1.png"
-                  alt="Book Image"
-                  style="height: 220px; width: 170px"
-                />
+                <router-link
+                  :to="{
+                    name: 'BookOverView',
+                    params: { id: book.id },
+                    query: { isHomePage: false },
+                  }"
+                  style="text-decoration: none; color: inherit"
+                >
+                  <div class="book-cover-container">
+                    <img
+                      :src="book.image"
+                      alt="Book Image"
+                      style="height: 220px; width: 170px"
+                    />
+                  </div>
+                </router-link>
               </div>
               <div style="display: flex">
-                <div class="mr-5" style="font-size: 15px">A Choice Of God</div>
-                <div style="font-size: 15px">$32.00</div>
+                <div style="display: flex">
+                  <div
+                    class="mr-5 text-truncate"
+                    style="font-size: 15px; max-width: 100px"
+                  >
+                    {{ book.title }}
+                  </div>
+                  <div style="font-size: 15px">${{ book.price }}</div>
+                </div>
               </div>
-              <div style="font-size: 15px">By: Clifford D. Simak</div>
               <div>
-                <star-rating
-                  :show-rating="false"
-                  :read-only="true"
-                  :star-size="15"
-                  :increment="0.5"
+                <v-rating
+                  half-increments
+                  readonly
+                  :length="5"
+                  :size="28"
+                  :model-value="book.bookRating"
+                  color="warning"
+                  active-color="warning"
                 />
               </div>
             </div>
           </div>
         </div>
-        <v-pagination :length="numPages" />
+        <div v-else class="loader">
+          <v-skeleton-loader
+            type="card"
+            v-for="n in 3"
+            :key="n"
+          ></v-skeleton-loader>
+        </div>
+        <div v-if="paginatedBooks.length == 0" class="notFoundPage">
+          <v-icon size="6rem" color="#AE0000"> mdi-magnify </v-icon>
+          <div style="color: #494949">
+            Oops, We didn't find what you were looking for
+          </div>
+        </div>
+
+        <v-pagination
+          :length="numPages"
+          :total-visible="2"
+          v-model="page"
+          v-if="paginatedBooks && !loader && paginatedBooks.length != 0"
+        />
       </div>
     </div>
     <Footer />
@@ -302,13 +291,11 @@
 
 <script>
 import Nav from "../components/Navs/main-navbar.vue";
-import StarRating from "vue-star-rating";
 import Footer from "../components/Footer/footer.vue";
 export default {
   name: "ShopPage",
   components: {
     Nav,
-    StarRating,
     Footer,
   },
   created() {
@@ -316,35 +303,53 @@ export default {
   },
   data() {
     return {
+      loader: false,
+      booksPerPage: 12,
+      page: 1,
+      books: null,
       showDiv: false,
-      enableClearButton:false,
-      ratings: [4, 3, 2, 1, 5],
-      Conditions: ["New ", "Used"],
-      Audiences: ["Childern", "Adults", "Young Adults"],
+      enableClearButton: false,
+      Conditions: ["New", "Used"],
+      Audiences: ["Childern", "Adults", "Young Adults", "Other"],
       Languages: ["Arabic", "English", "Other"],
-      bookTypes: ["Paper Books", "eBooks"],
       sorting: [
-        "Most Recent",
-        "Title (A-Z)",
         "Tilte (Z-A)",
         "Best Selling",
         "Publication date (Newest)",
         "Publication date (Oldest)",
+        "Highest Price",
+        "Lowest Price",
       ],
       checkedConditions: [],
       checkedGeners: [],
-      checkedLanguages: [],
       checkedAuthors: [],
       checkedAudience: [],
       checkedBookType: [],
       checkedSort: [],
+      ratingsSelected: [false, false, false, false, false],
+      selectedRatings: [],
       isLargeScreen: window.innerWidth >= 768,
+      selectedConditions: [],
+      selectedSorts: [],
+      selectedAudience: [],
+      selectedGenres: [],
+      selectedAuthors: [],
+      ratings: [1, 2, 3, 4, 5],
     };
   },
   computed: {
     numPages() {
-      const booksPerPage = 20;
-      return Math.ceil(60 / booksPerPage);
+      return Math.ceil(
+        (this.books ? this.books.length : 0) / this.booksPerPage
+      );
+    },
+    paginatedBooks() {
+      if (!this.books) return [];
+
+      const startIndex = (this.page - 1) * this.booksPerPage;
+      const endIndex = startIndex + this.booksPerPage;
+
+      return this.books.slice(startIndex, endIndex);
     },
   },
   mounted() {
@@ -354,6 +359,12 @@ export default {
     window.removeEventListener("resize", this.checkScreenSize);
   },
   methods: {
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    },
     checkScreenSize() {
       this.isLargeScreen = window.innerWidth >= 768;
     },
@@ -361,21 +372,78 @@ export default {
       this.showDiv = !this.showDiv;
     },
     getBooks() {
-      this.enableClearButton = true;
-      let data = {
-        bookCondition: this.checkedConditions,
-        bookRating: this.ratings,
-        bookAudience: this.checkedAudience,
-        bookLanguage: this.checkedLanguages,
-        bookType: this.checkedBookType,
-        sortBooksBy: this.checkedSort,
-        bookGener: this.checkedGeners,
-        bookAuthor: this.checkedAuthors,
+      this.loader = true;
+      this.scrollToTop();
+      this.selectedSorts = this.checkedSort
+        .map((value, index) => (value ? this.sorting[index] : null))
+        .filter(Boolean);
+      this.selectedGenres = this.checkedGeners
+        .map((value, index) => (value ? this.$genreOptions[index] : null))
+        .filter(Boolean);
+      this.selectedConditions = this.checkedConditions
+        .map((value, index) => (value ? this.Conditions[index] : null))
+        .filter(Boolean);
+      this.selectedAuthors = this.checkedAuthors
+        .map((value, index) => (value ? this.$authorOptions[index] : null))
+        .filter(Boolean);
+      this.selectedAudience = this.checkedAudience
+        .map((value, index) => (value ? this.Audiences[index] : null))
+        .filter(Boolean);
+
+      if (Array.isArray(this.ratings) && Array.isArray(this.ratingsSelected)) {
+        this.selectedRatings = this.ratings
+          .filter((_, index) => this.ratingsSelected[index])
+          .map((rating) => rating);
+      } else {
+        console.error("Ratings or ratingsSelected arrays are not defined");
+        return;
+      }
+      const params = {
+        bookCondition: this.selectedConditions,
+        bookRating: this.selectedRatings,
+        bookAudience: this.selectedAudience,
+        sortBooksBy: this.selectedSorts,
+        genre: this.selectedGenres,
+        bookAuthor: this.selectedAuthors,
       };
-      console.log("data", data);
+
+      if (
+        this.selectedRatings.length ||
+        this.selectedRatings.length ||
+        this.selectedAudience.length ||
+        this.selectedSorts.length ||
+        this.selectedGenres.length ||
+        this.selectedAuthors.length
+      ) {
+        this.enableClearButton = true;
+      }
+
+      this.$axios
+        .get("book", { params })
+        .then(async (response) => {
+          this.books = response.data;
+          this.loader = false;
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
     },
+
     resetFilter() {
-      console.log("reset");
+      this.selectedAuthors = [];
+      this.selectedGenres = [];
+      this.selectedAudience = [];
+      this.selectedRatings = [];
+      this.ratingsSelected = [];
+      this.selectedConditions = [];
+      this.selectedSorts = [];
+      this.checkedConditions = [];
+      this.checkedGeners = [];
+      this.checkedAuthors = [];
+      this.checkedAudience = [];
+      this.checkedSort = [];
+      this.enableClearButton = false;
+      this.getBooks();
     },
   },
 };
@@ -403,6 +471,20 @@ export default {
     justify-content: center;
     align-items: center;
   }
+  .loader {
+    width: 100%;
+  }
+  .notFoundPage {
+    height: auto;
+  }
+}
+
+.notFoundPage {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .add-btn {
   background: #ae0000;

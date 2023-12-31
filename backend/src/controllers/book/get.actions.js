@@ -5,6 +5,8 @@ const Tags = models.tags;
 const inThisBook = models.inThisBook;
 const topics = models.topics;
 const Review = models.Review;
+const { Sequelize, Op } = require("sequelize");
+
 const User = models.User;
 
 async function getBooksByGenre(req, res) {
@@ -148,14 +150,140 @@ async function getBookWithOffer(req, res) {
   }
 }
 
-async function getBooks(req,res){
+async function getAllGenres(req, res) {
   try {
-    console.log("hi")
-    return
-    return res.send(books);
+    const genres = await Book.findAll({
+      attributes: [[Sequelize.fn("DISTINCT", Sequelize.col("genre")), "genre"]],
+    });
+    const distinctGenres = genres.map((book) => book.genre);
+    return res.send(distinctGenres);
   } catch (err) {
     console.error(err);
     return res.sendStatus(500);
+  }
+}
+
+async function getBooks(req, res) {
+  try {
+    const {
+      bookCondition,
+      bookRating,
+      bookAudience,
+      sortBooksBy,
+      genre,
+      bookAuthor,
+    } = req.query;
+
+    let filters = {};
+
+    if (bookCondition) {
+      filters.bookCondition = bookCondition;
+    }
+
+    if (bookRating) {
+      filters.bookRating = bookRating;
+    }
+
+    if (bookAudience) {
+      let audienceTypes = Array.isArray(bookAudience)
+        ? bookAudience
+        : [bookAudience];
+
+      if (audienceTypes.includes("Other")) {
+        filters.targetedPeople = {
+          [Op.and]: [
+            { [Op.notLike]: "%Children%" },
+            { [Op.notLike]: "%Young Adults%" },
+            { [Op.notLike]: "%Adults%" },
+          ],
+        };
+      } else {
+        filters.targetedPeople = {
+          [Op.or]: audienceTypes.map((type) => ({
+            [Op.like]: `%${type}%`,
+          })),
+        };
+      }
+    }
+
+    let order = [];
+    if (sortBooksBy) {
+      sortBooksBy.forEach((sortOption) => {
+        switch (sortOption) {
+          case "Title (A-Z)":
+            order = [["title", "ASC"]];
+            break;
+          case "Title (Z-A)":
+            order = [["title", "DESC"]];
+            break;
+          case "Best Selling":
+            order = [
+              ["isBestSeller", "DESC"],
+              ["title", "ASC"],
+            ];
+            break;
+          case "Publication date (Newest)":
+            order = [["publicationYear", "DESC"]];
+            break;
+          case "Publication date (Oldest)":
+            order = [["publicationYear", "ASC"]];
+            break;
+          case "Highest Price":
+            order = [["price", "DESC"]];
+            break;
+          case "Lowest Price":
+            order = [["price", "ASC"]];
+            break;
+        }
+      });
+    }
+
+    if (genre) {
+      filters.genre = {
+        [Op.in]: genre,
+      };
+    }
+
+    if (bookAuthor) {
+      const author = await Author.findOne({
+        where: { name: bookAuthor },
+      });
+
+      if (author) {
+        filters.authorId = author.id;
+      } else {
+        return res.json([]);
+      }
+    }
+
+    const filteredBooks = await Book.findAll({
+      where: filters,
+      order: order.length > 0 ? order : undefined,
+    });
+
+    return res.json(filteredBooks);
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(500);
+  }
+}
+
+async function getBookByName(req, res) {
+  try {
+    const bookName = req.params.bookName;
+    const books = await Book.findAll({
+      where: {
+        title: {
+          [Op.like]: `%${bookName}%`,
+        },
+      },
+      attributes: ['id', 'title','genre'],
+      limit: 10,
+    });
+    res.json(books);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
   }
 }
 
@@ -164,5 +292,7 @@ module.exports = {
   getBookById,
   getBestSellersBooks,
   getBookWithOffer,
-  getBooks
+  getBooks,
+  getAllGenres,
+  getBookByName,
 };

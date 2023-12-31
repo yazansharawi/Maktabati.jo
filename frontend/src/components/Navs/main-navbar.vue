@@ -1,4 +1,20 @@
 <template>
+  <myRentedBooks
+    :model="myRentBooksDialog"
+    @update:model="myRentBooksDialog = $event"
+  />
+  <userWishList
+    :model="userWishListDialog"
+    @update:model="userWishListDialog = $event"
+  />
+  <userShoppingCart
+    :model="userShoppingCartDialog"
+    @update:model="userShoppingCartDialog = $event"
+  />
+  <editUserInfoDialog
+    :model="editUserDialog"
+    @update:model="editUserDialog = $event"
+  />
   <div class="nav-container">
     <nav
       class="navbar navbar-expand-lg"
@@ -31,21 +47,28 @@
           class="collapse navbar-collapse NavElements"
           id="navbarSupportedContent"
         >
-          <v-text-field
-            class="nav-search-field"
-            placeholder="Book Name"
-            clearable
-            variant="underlined"
-            dense
-            full-width
-            hide-details
-            single-line
-            outlined
-          >
-            <v-icon size="1.2rem" class="mt-1 mr-2" color="#3C3C43"
-              >mdi-magnify</v-icon
-            >
-          </v-text-field>
+          <div class="nav-search-field">
+            <input
+              type="text"
+              v-model="searchQuery"
+              @input="handleSearch"
+              class="search-input"
+              placeholder="Book Name"
+            />
+            <div class="dropdown" v-if="showDropdown">
+              <div v-if="searchResults.length > 0">
+                <div
+                  class="dropdown-item"
+                  v-for="book in searchResults"
+                  :key="book"
+                  @click="goToBook(book)"
+                >
+                  {{ book.title }}
+                </div>
+              </div>
+              <div class="dropdown-item" v-else>No Results Found</div>
+            </div>
+          </div>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item mr-3" v-for="item in navItems" :key="item.id">
               <router-link
@@ -78,18 +101,42 @@
                 <v-card>
                   <v-card-text>
                     <div class="mx-auto text-center">
-                      <v-avatar>
-                        <img
-                          style="height: 50px; border-radius: 40px"
-                          :src="this.user.image"
-                        />
-                      </v-avatar>
                       <h3>{{ this.user.firstName + this.user.lastName }}</h3>
                       <p class="text-caption mt-1">
                         {{ this.user.email }}
                       </p>
                       <v-divider class="my-3"></v-divider>
-                      <v-btn rounded variant="text"> Edit Account </v-btn>
+                      <v-btn
+                        rounded
+                        variant="text"
+                        @click="myRentBooksDialog = true"
+                      >
+                        My Rented Books
+                      </v-btn>
+                      <v-divider class="my-3"></v-divider>
+                      <v-btn
+                        rounded
+                        variant="text"
+                        @click="userWishListDialog = true"
+                      >
+                        WishList
+                      </v-btn>
+                      <v-divider class="my-3"></v-divider>
+                      <v-btn
+                        rounded
+                        variant="text"
+                        @click="userShoppingCartDialog = true"
+                      >
+                        Shopping Cart
+                      </v-btn>
+                      <v-divider class="my-3"></v-divider>
+                      <v-btn
+                        rounded
+                        variant="text"
+                        @click="editUserDialog = true"
+                      >
+                        Edit Account
+                      </v-btn>
                       <v-divider class="my-3"></v-divider>
                       <v-btn rounded variant="text" @click="logout">
                         Log Out
@@ -109,12 +156,30 @@
 </template>
 
 <script>
+import myRentedBooks from "../dialogs/myRentedBookDialog.vue";
+import userWishList from "../dialogs/wishListDialog.vue";
+import userShoppingCart from "../dialogs/shoppingCartDilaog.vue";
+import editUserInfoDialog from "../dialogs/editUserProfileDialog.vue";
 export default {
   name: "NavBar",
+
+  components: {
+    myRentedBooks,
+    userWishList,
+    userShoppingCart,
+    editUserInfoDialog,
+  },
   data() {
     return {
       isMobile: false,
       user: null,
+      searchQuery: "",
+      searchResults: [],
+      showDropdown: false,
+      myRentBooksDialog: false,
+      userWishListDialog: false,
+      userShoppingCartDialog: false,
+      editUserDialog: false,
     };
   },
   props: {
@@ -131,7 +196,6 @@ export default {
         { id: 2, label: "Shop", link: "/shop" },
         { id: 3, label: "Categories", link: "/categories" },
         { id: 4, label: "Community", link: "" },
-        { id: 5, label: "WishList", link: "" },
       ];
 
       if (this.isMobile) {
@@ -159,6 +223,34 @@ export default {
     },
     checkScreenSize() {
       this.isMobile = window.innerWidth <= 992;
+    },
+    async handleSearch() {
+      if (this.searchQuery.length > 2) {
+        try {
+          const response = await this.$axios.get(
+            `/book/get-Books-by-name/${this.searchQuery}`
+          );
+          this.searchResults = response.data;
+          this.showDropdown = true;
+        } catch (error) {
+          console.error(error);
+          this.searchResults = [];
+          this.showDropdown = false;
+        }
+      } else {
+        this.searchResults = [];
+        this.showDropdown = false;
+      }
+    },
+    goToBook(book) {
+      if (book && book.genre) {
+        this.$axios.put(
+          `user/user-recent-searches/${this.$store.getters.user.uuid}`,
+          { genre: book.genre }
+        );
+      }
+      this.$router.push({ name: "BookOverView", params: { id: book.id } });
+      this.showDropdown = false;
     },
   },
 };
@@ -193,7 +285,6 @@ export default {
 }
 .nav-search-field {
   margin-bottom: 10px;
-  top: 0px;
   position: absolute;
   right: 220px;
   width: 300px;
@@ -236,7 +327,35 @@ export default {
   align-items: center;
   flex-direction: column-reverse;
 }
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.dropdown {
+  position: absolute;
+  background-color: #f6f6f6;
+  width: 100%;
+  border: 1px solid #ddd;
+  z-index: 100;
+}
+
+.dropdown-item {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+}
+
+.dropdown-item:hover {
+  background-color: #eee;
+}
 @media (max-width: 992px) {
+  .dropdown {
+    min-width: 85%;
+  }
   .centered-header {
     padding-top: 85px;
     position: absolute;

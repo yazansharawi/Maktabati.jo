@@ -1,10 +1,22 @@
-const { getShoppingCart } = require('./get.shopping.cart.action')
+const postActions = require("./post.actions");
+const getActions = require("./get.actions");
+const deleteActions = require("./delete.actions");
 
 
 module.exports = {
-    '/': {
-        get: {
-            action: getShoppingCart
-        },
+  "/add-to-shop-cart-by-user-uuid/:uuid": {
+    post: {
+      action: postActions.addToShopCart
     },
-}
+  },
+  "/get-shop-cart-by-user-uuid/:uuid": {
+    get: {
+      action: getActions.getShopCartPerUesr
+    },
+  },
+  "/delete-from-shop-cart-by-user-uuid/:uuid": {
+    delete: {
+      action: deleteActions.deleteFromShopCartPerUesr
+    },
+  },
+};

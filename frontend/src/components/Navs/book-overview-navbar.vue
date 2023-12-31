@@ -10,7 +10,10 @@
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
         <router-link
-          :to="{ name: this.isCategoriesPage == 'false' ? 'CategoriesPage' : 'HomePage' }"
+          :to="{
+            name:
+              this.isCategoriesPage == 'false' ? 'CategoriesPage' : 'HomePage',
+          }"
           style="text-decoration: none; color: inherit"
         >
           <div class="back_button">
@@ -46,13 +49,7 @@
           </ul>
         </div>
       </div>
-      <div class="red-div">
-        <div class="white-circle" v-if="!isGetUserPage">
-          <v-icon size="2rem" color="#ae0000" style="padding-top: 11px">
-            mdi-account
-          </v-icon>
-        </div>
-      </div>
+      <div class="red-div" />
       <div class="right-angle-triangle"></div>
       <div class="left-angle-triangle"></div>
     </nav>

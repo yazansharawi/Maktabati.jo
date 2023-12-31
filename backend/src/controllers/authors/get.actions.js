@@ -1,5 +1,6 @@
 const models = require("../../models");
 const author = models.author;
+const { Sequelize } = require('sequelize');
 
 function generateRandomIds(count, min, max) {
   const randomIds = new Set();
@@ -45,7 +46,24 @@ async function getAuthorById(req, res) {
       return res.sendStatus(500);
     });
 }
+
+async function getAuthors(req, res) {
+  try {
+    const authors = await author.findAll({
+      attributes: [
+        [Sequelize.fn('DISTINCT', Sequelize.col('name')), 'name'],
+      ],
+    });
+
+    const distinctAuthors = authors.map((author) => author.name);
+    return res.send(distinctAuthors);
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(500);
+  }
+}
 module.exports = {
   getMainPafeAuthors,
   getAuthorById,
+  getAuthors
 };

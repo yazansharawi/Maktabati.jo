@@ -103,6 +103,9 @@ export default {
 };
 </script>
 <style scoped>
+* {
+  text-decoration: none;
+}
 h6 {
   color: #494949;
 }

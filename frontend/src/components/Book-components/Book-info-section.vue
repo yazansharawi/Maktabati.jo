@@ -41,8 +41,12 @@
               color="#AE0000"
               class="btn mr-1"
             >
-              <v-icon color="white" class="pr-1">{{ tag.icon }}</v-icon>
-              <span style="color: white">{{ tag.tagName }}</span>
+              <v-icon color="white" class="pr-1" size="1rem">{{
+                tag.icon
+              }}</v-icon>
+              <span style="color: white; font-size: 13px">{{
+                tag.tagName
+              }}</span>
             </v-btn>
           </div>
         </div>

@@ -115,6 +115,15 @@ const routes= [
     //   }
     // },
 	},
+  {
+    path: '/ownerProduct',
+    name: 'OwnerProductPage',
+    component: () => import('@/pages/owner-product-page.vue'),
+    meta: {
+      title: 'Owner Product Page',
+      requiresAuth: true,
+    },
+  },
 ];
 
 const router = createRouter({

@@ -124,6 +124,15 @@ const routes= [
       requiresAuth: true,
     },
   },
+  {
+    path: '/community',
+    name: 'community',
+    component: () => import('@/pages/community-page.vue'),
+    meta: {
+      title: 'Community Page',
+      requiresAuth: true,
+    },
+  },
 ];
 
 const router = createRouter({

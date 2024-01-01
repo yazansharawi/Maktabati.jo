@@ -195,7 +195,7 @@ export default {
         { id: 1, label: "Home", link: "/" },
         { id: 2, label: "Shop", link: "/shop" },
         { id: 3, label: "Categories", link: "/categories" },
-        { id: 4, label: "Community", link: "" },
+        { id: 4, label: "Community", link: "/community" },
       ];
 
       if (this.isMobile) {

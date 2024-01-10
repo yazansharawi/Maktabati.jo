@@ -13,7 +13,7 @@ export default {
 </script>
 
 <style>
-html {
+* {
   font-family: "Times New Roman";
 }
 </style>

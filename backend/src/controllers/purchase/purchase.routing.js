@@ -7,4 +7,14 @@ module.exports = {
       action: postActions.addPurchaseByUserUuid,
     },
   },
+  "/get-book-store-orders-by-store-uuid/:uuid":{
+    get:{
+      action: getActions.getStoreOrdersByStoreUuid,
+    }
+  },
+  "/get-book-store-recent-orders-by-uuid/:uuid": {
+    get: {
+      action: getActions.getStoreRecentOrders,
+    },
+  },
 };

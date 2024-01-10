@@ -8,6 +8,7 @@ const store = createStore({
   state: {
     isAuthenticated: false,
     user: null,
+    storeUuid: null,
   },
   mutations: {
     SET_AUTHENTICATED(state, isAuthenticated) {
@@ -15,6 +16,9 @@ const store = createStore({
     },
     SET_USER(state, user) {
       state.user = user;
+    },
+    SET_STORE_UUID(state, storeUuid) {
+      state.storeUuid = storeUuid;
     },
   },
   actions: {
@@ -24,11 +28,19 @@ const store = createStore({
       localStorage.setItem("user", JSON.stringify({ ...user, uuid: userUuid }));
       localStorage.setItem(TOKEN_KEY, token);
     },
-    
+
+    signUpSuccessBookStore({ commit, state }, { storeUuid, token }) {
+      console.log("store", storeUuid);
+      const updatedUser = { ...state.user, storeUuid };
+      commit("SET_STORE_UUID", storeUuid);
+      commit("SET_USER", updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      localStorage.setItem(TOKEN_KEY, token);
+    },
 
     loginSuccess({ commit }, { user, token, uuid }) {
       const userWithUuid = { ...user, uuid };
-    
+
       commit("SET_AUTHENTICATED", true);
       commit("SET_USER", userWithUuid);
       localStorage.setItem("user", JSON.stringify(userWithUuid));
@@ -40,27 +52,34 @@ const store = createStore({
       localStorage.removeItem(TOKEN_KEY);
     },
     async login({ commit }, { email, password }) {
-      try {
-        const response = await axios.post("user/login", { email, password });
-        const { user, token, uuid } = response.data;
-    
-        user.uuid = uuid;
-    
-        commit("SET_AUTHENTICATED", true);
-        commit("SET_USER", user);
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem(TOKEN_KEY, token);
-    
-        router.push({ name: "HomePage" });
-      } catch (error) {
-        let errorMessage = "Login failed";
-        if (error.response && error.response.status === 401) {
-          errorMessage = "Invalid credentials";
+      const response = await axios.post("user/login", { email, password });
+      const { user, token } = response.data;
+      console.log("response.uuid", response.data.response.uuid);
+      user.uuid = response.data.response.uuid;
+      let uuid = response.data.response.uuid;
+
+      commit("SET_AUTHENTICATED", true);
+      commit("SET_USER", user);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem(TOKEN_KEY, token);
+
+      if (user.type === "owner") {
+        console.log("uuid", uuid);
+        const bookstoreResponse = await axios.get(
+          `book-store/get-book-store-by-uuid/${uuid}`
+        );
+        console.log("bookstoreResponse", bookstoreResponse);
+        if (bookstoreResponse.data && bookstoreResponse.data.success) {
+          this.$store.dispatch(
+            "setBookStoreUuid",
+            bookstoreResponse.data.bookStore.bookStoreUuid
+          );
         }
-        console.error(errorMessage, error);
-        throw new Error(errorMessage);
+      } else {
+        router.push({ name: "HomePage" });
       }
-    },    
+    },
+
     checkAuthentication({ commit }) {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
@@ -73,6 +92,9 @@ const store = createStore({
           if (userJson) {
             const user = JSON.parse(userJson);
             commit("SET_USER", user);
+            if (user.storeUuid) {
+              commit("SET_STORE_UUID", user.storeUuid);
+            }
           } else {
             console.warn("User data in localStorage is undefined.");
           }
@@ -85,6 +107,7 @@ const store = createStore({
   getters: {
     isAuthenticated: (state) => state.isAuthenticated,
     user: (state) => state.user,
+    storeUuid: (state) => state.storeUuid,
   },
 });
 

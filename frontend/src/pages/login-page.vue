@@ -30,7 +30,7 @@
               color: #494949;
             "
           >
-            Welcome To Back!
+            Welcome Back!
           </div>
           <div
             style="
@@ -129,7 +129,6 @@ export default {
           email: this.userEmail,
           password: this.password,
         });
-        this.$router.push({ name: "HomePage" });
       } catch (error) {
         console.error("Login Error:", error);
       }

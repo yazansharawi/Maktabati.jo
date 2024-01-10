@@ -19,7 +19,7 @@ async function getUserData(email) {
   return await User.findOne({
     where: { email },
     attributes: {
-      exclude: ["password", "uuid", "id"],
+      exclude: ["password", "id"],
     },
   });
 }
@@ -35,7 +35,11 @@ async function loginUser(req, res) {
         const token = jwt.sign({ email }, secretKey, {
           expiresIn: "1h",
         });
-        res.json({ token, user });
+        const response = {
+          uuid: user.uuid,
+          user: user,
+        };
+        res.json({ token, response });
       } else {
         res.status(404).json({ error: "User not found" });
       }
@@ -103,6 +107,7 @@ async function createUser(req, res) {
       firstName: newUser.firstName,
       lastName: newUser.lastName,
       email: newUser.email,
+      type: newUser.type,
     };
     res.status(201).json({
       message: "User created successfully",

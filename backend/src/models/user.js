@@ -72,6 +72,8 @@ class User extends Sequelize.Model {
     this.myAssociations = this.hasMany(models.wishList, {
       foreignKey: "userUuid",
     });
+    this.hasOne(models.bookStore, { foreignKey: "ownerUuid", as: "bookstore" });
+
   }
   async validPassword(password) {
     try {

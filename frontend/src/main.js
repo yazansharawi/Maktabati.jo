@@ -1,4 +1,4 @@
-import { createApp} from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import axios from "axios";
 import vuetify from "./plugins/vuetify.js";
@@ -18,7 +18,6 @@ import {
 axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 
 const app = createApp(App);
-
 
 app.config.globalProperties.$questions = questions;
 app.config.globalProperties.$bookTypeOptions = bookTypeOptions;
@@ -50,9 +49,12 @@ async function getAllAuthors() {
 
 async function getWishListForUserByUuid() {
   try {
-    const response = await axios.get(`wish-list/get-wishlist-by-uuid/${store.getters.user.uuid}`);
+    const response = await axios.get(
+      `wish-list/get-wishlist-by-uuid/${store.getters.user.uuid}`
+    );
     app.config.globalProperties.$wishListPerUser = response.data.wishlistItems;
-    app.config.globalProperties.$wishListPerUserBookInfo = response.data.booksInfo;
+    app.config.globalProperties.$wishListPerUserBookInfo =
+      response.data.booksInfo;
   } catch (error) {
     console.error("Error fetching data:", error);
     throw error;
@@ -61,7 +63,9 @@ async function getWishListForUserByUuid() {
 
 async function getUserLastFiveSearches() {
   try {
-    const response = await axios.get(`user/based-on-the-user-searches/${store.getters.user.uuid}`);
+    const response = await axios.get(
+      `user/based-on-the-user-searches/${store.getters.user.uuid}`
+    );
     app.config.globalProperties.$userLastFiveSearches = response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -69,9 +73,11 @@ async function getUserLastFiveSearches() {
   }
 }
 
-async function getBooksRentedPeruserByUuid(){
+async function getBooksRentedPeruserByUuid() {
   try {
-    const response = await axios.get(`rent-book/get-rented-books-per-user-by-uuid/${store.getters.user.uuid}`);
+    const response = await axios.get(
+      `rent-book/get-rented-books-per-user-by-uuid/${store.getters.user.uuid}`
+    );
     app.config.globalProperties.$userRentedBooks = response.data.bookIds;
     app.config.globalProperties.$userRentedBooksInfo = response.data.booksInfo;
   } catch (error) {
@@ -80,9 +86,11 @@ async function getBooksRentedPeruserByUuid(){
   }
 }
 
-async function getShoppingCartPerUserByUuid(){
+async function getShoppingCartPerUserByUuid() {
   try {
-    const response = await axios.get(`shopping-cart/get-shop-cart-by-user-uuid/${store.getters.user.uuid}`);
+    const response = await axios.get(
+      `shopping-cart/get-shop-cart-by-user-uuid/${store.getters.user.uuid}`
+    );
     app.config.globalProperties.$userShoppingCart = response.data.bookIds;
     app.config.globalProperties.$userShoppingCartInfo = response.data.booksInfo;
   } catch (error) {
@@ -91,20 +99,61 @@ async function getShoppingCartPerUserByUuid(){
   }
 }
 
+async function getBookStoreTotalRevenue() {
+  try {
+    const response = await axios.get(
+      `book-store/get-book-store-total-revenue-by-uuid/${store.getters.storeUuid}`
+    );
+    app.config.globalProperties.$bookStoreTotalRevenue =
+      response.data.totalRevenue;
+  } catch (e) {
+    console.error("Error fetching data:", e);
+    throw e;
+  }
+}
 
+async function getBookRentedAtTheMomen() {
+  try {
+    const response = await axios.get(`book-store/get-book-store-rented-books-by-uuid/${store.getters.storeUuid}`)
+    app.config.globalProperties.$bookStoreTotalRentedBooks =
+    response.data.rentedBookCount;
+  } catch (e) {
+    console.error("Error fetching data:", e);
+    throw e;
+  }
+}
 
+async function getBookStoreSoldBooks(){
+  try {
+    const response = await axios.get(`book-store/get-book-store-sold-books-by-uuid/${store.getters.storeUuid}`)
+    app.config.globalProperties.$bookStoreBookSoldLastMonth =
+    response.data.soldBooks.length;
+  } catch (e) {
+    console.error("Error fetching data:", e);
+    throw e;
+  }
+}
+
+if (store.getters.user && store.getters.user.type === "regularUser") {
+  console.log("Regular User");
+  getWishListForUserByUuid();
+  getUserLastFiveSearches();
+  getBooksRentedPeruserByUuid();
+  getShoppingCartPerUserByUuid();
+} else if (store.getters.user && store.getters.user.type === "owner") {
+  console.log("Owner");
+  getBookStoreTotalRevenue();
+  getBookRentedAtTheMomen();
+  getBookStoreSoldBooks();
+} else {
+  console.log("No Store found");
+}
 
 app.use(router);
 app.use(vuetify);
 app.use(store);
 
 app.mount("#app");
-
-
-loadFonts();
 getAllGenres();
 getAllAuthors();
-getWishListForUserByUuid();
-getUserLastFiveSearches();
-getBooksRentedPeruserByUuid();
-getShoppingCartPerUserByUuid();
+loadFonts();

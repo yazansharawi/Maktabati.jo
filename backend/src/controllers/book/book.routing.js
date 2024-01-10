@@ -1,14 +1,16 @@
 const getActions = require("./get.actions");
 const postActions = require("./post.actions");
+const deleteActions = require("./delete.action");
+const putActions = require("./put.actions");
 
 module.exports = {
   "/": {
     post: {
       action: postActions.createNewBooks,
     },
-    get:{
-      action: getActions.getBooks
-    }
+    get: {
+      action: getActions.getBooks,
+    },
   },
   "/by-genre/:genre": {
     get: {
@@ -30,14 +32,29 @@ module.exports = {
       action: getActions.getBookWithOffer,
     },
   },
-  "/get-Books-genre":{
+  "/get-Books-genre": {
     get: {
       action: getActions.getAllGenres,
     },
   },
-  "/get-Books-by-name/:bookName":{
+  "/get-Books-by-name/:bookName": {
     get: {
       action: getActions.getBookByName,
     },
-  }
+  },
+  "/add-book-by-store-uuid/:uuid": {
+    post: {
+      action: postActions.addBookByStoreUuid,
+    },
+  },
+  "/delete-by-book-id/:id": {
+    delete: {
+      action: deleteActions.deleteBookById,
+    },
+  },
+  "/update-by-book-id/:id": {
+    put: {
+      action: putActions.updateBookById,
+    },
+  },
 };

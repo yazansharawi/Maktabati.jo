@@ -1,7 +1,5 @@
-<!-- Sidebar.vue -->
-
 <template>
-  <aside class="sidebar" :class="{ 'responsive': isResponsive }">
+  <aside class="sidebar" :class="{ responsive: isResponsive }">
     <!-- Logo and Dashboard -->
     <div class="sidebar-header">
       <h1>Maktabti.jo</h1>
@@ -16,25 +14,59 @@
 
     <!-- Responsive Dropdown List -->
     <ul class="responsive-menu-list" v-if="isResponsive">
-      <li @click="navigate('Dashboard')">🏠 DashBoard</li>
-      <li @click="navigate('Orders')">📦 Orders</li>
-      <li @click="navigate('Products')">📚 Products</li>
-      <li @click="navigate('Overview')">📈 Overview</li>
-      <li @click="navigate('Message')">💬 Message</li>
-      <li @click="navigate('Settings')">⚙️ Settings</li>
-      <li @click="upgrade">🌟 Upgrade now</li>
-      <li @click="logout">↩️ Logout</li>
+      <li
+        @click="navigate('Dashboard')"
+        :class="{ active: selectedSection === 'Dashboard' }"
+      >
+        🏠 Dashboard
+      </li>
+      <li
+        @click="navigate('Orders')"
+        :class="{ active: selectedSection === 'Orders' }"
+      >
+        📦 Orders
+      </li>
+      <li
+        @click="navigate('Products')"
+        :class="{ active: selectedSection === 'Products' }"
+      >
+        📚 Products
+      </li>
+      <li
+        @click="navigate('Settings')"
+        :class="{ active: selectedSection === 'Settings' }"
+      >
+        ⚙️ Settings
+      </li>
+      <li class="logout-btn" @click="logout">↩️ Logout</li>
     </ul>
 
     <!-- Menu items -->
     <ul class="menu-list" v-if="!isResponsive">
-      <li class="active">🏠 DashBoard</li>
-      <li>📦 Orders</li>
-      <li>📚 Products</li>
-      <li>📈 Overview</li>
-      <li>💬 Message</li>
-      <li>⚙️ Settings</li>
-      <li class="upgrade-btn" @click="upgrade">🌟 Upgrade now</li>
+      <li
+        @click="navigate('Dashboard')"
+        :class="{ active: this.selectedSection === 'Dashboard' }"
+      >
+        🏠 Dashboard
+      </li>
+      <li
+        @click="navigate('Orders')"
+        :class="{ active: this.selectedSection === 'Orders' }"
+      >
+        📦 Orders
+      </li>
+      <li
+        @click="navigate('Products')"
+        :class="{ active: this.selectedSection === 'Products' }"
+      >
+        📚 Products
+      </li>
+      <li
+        @click="navigate('Settings')"
+        :class="{ active: this.selectedSection === 'Settings' }"
+      >
+        ⚙️ Settings
+      </li>
       <li class="logout-btn" @click="logout">↩️ Logout</li>
     </ul>
   </aside>
@@ -42,27 +74,60 @@
 
 <script>
 export default {
-  name: 'OwnerSidebar',
+  name: "OwnerSidebar",
   data() {
     return {
       isResponsive: false,
+      selectedSection: "",
     };
   },
+  watch: {
+    selectedSection(newSection, oldSection) {
+      const oldSectionElement = this.$el.querySelector(
+        `[data-section="${oldSection}"]`
+      );
+      if (oldSectionElement) {
+        oldSectionElement.classList.remove("active");
+      }
+
+      const newSectionElement = this.$el.querySelector(
+        `[data-section="${newSection}"]`
+      );
+      if (newSectionElement) {
+        newSectionElement.classList.add("active");
+      }
+    },
+  },
   methods: {
+    async logout() {
+      await this.$store.dispatch("logout");
+
+      this.$router.push({ name: "logInPage" });
+    },
     toggleResponsive() {
       this.isResponsive = !this.isResponsive;
     },
     navigate(section) {
-      // Add logic for navigating to the selected section
-      console.log(`Navigating to ${section}`);
-    },
-    upgrade() {
-      // Add logic for upgrade action
-      console.log('Upgrade now clicked');
-    },
-    logout() {
-      // Add logic for logout action
-      console.log('Logout clicked');
+      let routeName = "";
+      switch (section) {
+        case "Dashboard":
+          routeName = "ownerDashboard";
+          break;
+        case "Orders":
+          routeName = "Orders";
+          break;
+        case "Products":
+          routeName = "OwnerProductPage";
+          break;
+        case "Settings":
+          routeName = "bookStoreSetting";
+          break;
+        default:
+          console.warn("Unknown section:", section);
+          return;
+      }
+      this.selectedSection = section;
+      this.$router.push({ name: routeName });
     },
   },
 };
@@ -72,7 +137,7 @@ export default {
 .sidebar {
   width: 80%;
   height: 100%;
-  background-color: #FFF;
+  background-color: #fff;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -103,8 +168,8 @@ button {
 }
 
 li.active {
-  background: #d32f2f;
-  color: white;
+  background: #d32f2f !important;
+  color: white !important;
 }
 
 li:hover {
@@ -124,7 +189,6 @@ li:hover {
   font-size: 16px;
 }
 
-.upgrade-btn,
 .logout-btn {
   font-size: 16px;
   cursor: pointer;
@@ -180,6 +244,7 @@ li:hover {
     border-radius: 0px;
     width: 100%;
     margin: 0;
+    height: 15%;
   }
 
   .burger-menu {

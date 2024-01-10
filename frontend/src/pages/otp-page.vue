@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <Nav :isGetUserPage="true" /> -->
     <div
       style="
         display: flex;
@@ -49,7 +48,6 @@
 </template>
 
 <script>
-// import Nav from "../components/Navs/main-navbar.vue";
 export default {
   name: "OtpPage",
   data() {
@@ -57,9 +55,6 @@ export default {
       otp: "",
     };
   },
-  // components: {
-  //   Nav,
-  // },
   methods: {
     async verifyOtp() {
       try {
@@ -72,7 +67,7 @@ export default {
           if (response.data.userType === "regularUser") {
             this.$router.push({ name: "UserPresona" });
           } else {
-            this.$router.push({ name: "ownerDashboard" });
+            this.$router.push({ name: "RegisterTheOwnerPage" });
           }
         } else {
           console.error("OTP verification failed");

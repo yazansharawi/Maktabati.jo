@@ -8,7 +8,9 @@
         <h4>Product Control Dashboard</h4>
         <div class="d-flex align-items-center">
           <!-- Add Product Button -->
-          <button @click="showAddProductModal" class="btn btn-success">Add Product</button>
+          <button @click="showAddProductModal" class="btn btn-success">
+            Add Product
+          </button>
         </div>
       </div>
 
@@ -19,69 +21,68 @@
           <div class="d-flex justify-content-between align-items-center">
             <!-- Sort and Filter Dropdowns -->
             <div class="dropdown ms-2">
-                <button
+              <button
                 class="btn btn-secondary dropdown-toggle"
                 type="button"
                 id="sortDropdown"
                 data-bs-toggle="dropdown"
                 aria-haspopup="true"
                 aria-expanded="false"
-                >
+                disabled
+              >
                 Sort By
-                </button>
-                <div class="dropdown-menu p-2" aria-labelledby="sortDropdown">
+              </button>
+              <div class="dropdown-menu p-2" aria-labelledby="sortDropdown">
                 <!-- Sort Options -->
                 <div class="form-check">
-                    <input
+                  <input
                     class="form-check-input"
                     type="radio"
                     name="sortOption"
                     id="sortByIdAsc"
                     @change="sortTable('id')"
                     checked
-                    />
-                    <label class="form-check-label" for="sortByIdAsc">
-                    ID
-                    </label>
+                  />
+                  <label class="form-check-label" for="sortByIdAsc"> ID </label>
                 </div>
 
                 <div class="form-check">
-                    <input
+                  <input
                     class="form-check-input"
                     type="radio"
                     name="sortOption"
                     id="sortByNameAsc"
                     @change="sortTable('name')"
-                    />
-                    <label class="form-check-label" for="sortByNameAsc">
+                  />
+                  <label class="form-check-label" for="sortByNameAsc">
                     Name
-                    </label>
+                  </label>
                 </div>
 
                 <div class="form-check">
-                    <input
+                  <input
                     class="form-check-input"
                     type="radio"
                     name="sortOption"
                     id="sortByPriceAsc"
                     @change="sortTable('price')"
-                    />
-                    <label class="form-check-label" for="sortByPriceAsc">
+                  />
+                  <label class="form-check-label" for="sortByPriceAsc">
                     Price
-                    </label>
+                  </label>
                 </div>
 
                 <div class="form-check">
-                    <input
+                  <input
                     class="form-check-input"
                     type="radio"
                     name="sortOption"
                     id="sortByQuantityAsc"
                     @change="sortTable('quantity')"
-                    />
-                    <label class="form-check-label" for="sortByQuantityAsc">
+                  />
+                  <label class="form-check-label" for="sortByQuantityAsc">
                     Quantity
-                    </label>
+                  </label>
                 </div>
 
                 <!-- Divider Line -->
@@ -89,36 +90,34 @@
 
                 <!-- Ascending or Descending Order -->
                 <div class="form-check">
-                    <input
+                  <input
                     class="form-check-input"
                     type="radio"
                     name="sortOrder"
                     id="ascOrder"
                     @change="sortTable(sortBy)"
                     checked
-                    />
-                    <label class="form-check-label" for="ascOrder">
-                    Asc
-                    </label>
+                  />
+                  <label class="form-check-label" for="ascOrder"> Asc </label>
                 </div>
 
                 <div class="form-check">
-                    <input
+                  <input
                     class="form-check-input"
                     type="radio"
                     name="sortOrder"
                     id="descOrder"
                     @change="sortTable(sortBy, 'desc')"
-                    />
-                    <label class="form-check-label" for="descOrder">
-                    Desc
-                    </label>
+                  />
+                  <label class="form-check-label" for="descOrder"> Desc </label>
                 </div>
-                </div>
+              </div>
             </div>
 
             <!-- Search Button -->
-            <button class="btn btn-primary ms-2" @click="toggleSearch">Search</button>
+            <button class="btn btn-primary ms-2" @click="toggleSearch" disabled>
+              Search
+            </button>
 
             <!-- Search Input (Hidden by default) -->
             <input
@@ -139,20 +138,27 @@
                 <th>Book Name</th>
                 <th>Price</th>
                 <th>Quantity</th>
-                <th>Category</th>
+                <th>Genre</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr v-for="book in filteredProductInventory" :key="book.id">
+            <tbody v-if="this.books">
+              <tr v-for="book in this.books" :key="book.id">
                 <td>{{ book.id }}</td>
-                <td>{{ book.name }}</td>
+                <td>{{ book.title }}</td>
                 <td>${{ book.price }}</td>
                 <td>{{ book.quantity }}</td>
-                <td>{{ book.category }}</td>
+                <td>{{ book.genre }}</td>
                 <td>
-                  <button @click="editBook(book)" class="btn btn-primary mr-2">Edit</button>
-                  <button @click="deleteBook(book.id)" class="btn btn-danger me-2">Delete</button>
+                  <button @click="editBook(book)" class="btn btn-primary mr-2">
+                    Edit
+                  </button>
+                  <button
+                    @click="deleteBook(book.id)"
+                    class="btn btn-danger me-2"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -167,54 +173,92 @@
       <div class="card mb-4">
         <div class="card-body">
           <h5 class="card-title">Number of Products</h5>
-          <p class="card-text">{{ productInventory.length }}</p>
+          <p class="card-text">{{ this.bookQty ? this.bookQty : 0 }}</p>
         </div>
       </div>
 
-      <!-- Low Stock Products Card -->
-      <div class="card mb-4">
+      <!-- <div class="card mb-4">
         <div class="card-body">
           <h5 class="card-title">Low Stock Products</h5>
           <p class="card-text">{{ lowStockProducts.length }}</p>
         </div>
-      </div>
+      </div> -->
 
-      <!-- Out of Stock Products Card -->
+      <!-- 
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Out of Stock Products</h5>
           <p class="card-text">{{ outOfStockProducts.length }}</p>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Add/Edit Book Form Modal -->
-    <div v-if="showModal" class="modal fade show" tabindex="-1" role="dialog" style="display: block;">
+    <div
+      v-if="showModal"
+      class="modal fade show"
+      tabindex="-1"
+      role="dialog"
+      style="display: block"
+    >
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ editMode ? 'Edit Book' : 'Add Book' }}</h5>
-            <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
+            <h5 class="modal-title">
+              {{ editMode ? "Edit Book" : "Add Book" }}
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              @click="closeModal"
+              aria-label="Close"
+            ></button>
           </div>
           <div class="modal-body">
-            <form @submit.prevent="editMode ? updateBook() : addBook()">
+            <form @submit.prevent="handleSubmit">
               <div class="mb-3">
                 <label for="productName" class="form-label">Book Name</label>
-                <input type="text" v-model="newProduct.name" class="form-control" id="productName" required>
+                <input
+                  type="text"
+                  v-model="newProduct.title"
+                  class="form-control"
+                  id="productName"
+                  required
+                />
               </div>
               <div class="mb-3">
                 <label for="productPrice" class="form-label">Price</label>
-                <input type="number" v-model="newProduct.price" class="form-control" id="productPrice" required>
+                <input
+                  type="number"
+                  v-model="newProduct.price"
+                  class="form-control"
+                  id="productPrice"
+                  required
+                />
               </div>
               <div class="mb-3">
                 <label for="productQuantity" class="form-label">Quantity</label>
-                <input type="number" v-model="newProduct.quantity" class="form-control" id="productQuantity" required>
+                <input
+                  type="number"
+                  v-model="newProduct.quantity"
+                  class="form-control"
+                  id="productQuantity"
+                  required
+                />
               </div>
               <div class="mb-3">
-                <label for="bookCategory" class="form-label">Category</label>
-                <input type="text" v-model="newProduct.category" class="form-control" id="bookCategory" required>
+                <label for="bookCategory" class="form-label">Genre</label>
+                <input
+                  type="text"
+                  v-model="newProduct.genre"
+                  class="form-control"
+                  id="bookCategory"
+                  required
+                />
               </div>
-              <button type="submit" class="btn btn-primary">{{ editMode ? 'Update Book' : 'Add Book' }}</button>
+              <button type="submit" class="btn btn-primary">
+                {{ editMode ? "Update Book" : "Add Book" }}
+              </button>
             </form>
           </div>
         </div>
@@ -231,85 +275,119 @@ import _ from "lodash";
 export default {
   data() {
     return {
-      productInventory: [
-        { id: 1, name: 'Product A', price: 50, quantity: 100, category: 'Fiction' },
-        { id: 2, name: 'Product B', price: 30, quantity: 50, category: 'Mystery' },
-        { id: 3, name: 'Product C', price: 25, quantity: 75, category: 'Science Fiction' },
-        { id: 4, name: 'Product D', price: 40, quantity: 120, category: 'Romance' },
-        { id: 5, name: 'Product E', price: 60, quantity: 90, category: 'Fantasy' },
-        { id: 6, name: 'Product F', price: 35, quantity: 60, category: 'Thriller' },
-        { id: 7, name: 'Product G', price: 45, quantity: 80, category: 'Non-Fiction' },
-        { id: 8, name: 'Product H', price: 55, quantity: 110, category: 'Biography' },
-        { id: 9, name: 'Product I', price: 28, quantity: 5, category: 'Historical Fiction' },
-        { id: 10, name: 'Product J', price: 75, quantity: 0, category: 'Self-Help' },
-      ],
+      books: [],
       showModal: false,
       sortedProductInventory: [],
-      sortBy: 'id',
-      sortOrder: 'asc',
-      search: '',
+      sortBy: "id",
+      sortOrder: "asc",
+      search: "",
       showSearch: false,
       newProduct: {
-        name: '',
+        title: "",
         price: null,
         quantity: null,
-        category: '',
+        genre: "",
       },
       editMode: false,
       selectedBook: null,
+      bookQty: null,
+      genre: null,
     };
   },
   components: {
-    OwnerSidebar
+    OwnerSidebar,
   },
-  computed: {
-    filteredProductInventory() {
-      const search = this.search.toLowerCase();
-      return this.sortedProductInventory.filter(book =>
-        book.name.toLowerCase().includes(search) || String(book.id).includes(search)
-      );
-    },
-    lowStockProducts() {
-      return this.productInventory.filter(book => book.quantity > 0 && book.quantity <= 10);
-    },
-    outOfStockProducts() {
-      return this.productInventory.filter(book => book.quantity === 0);
-    },
+  created() {
+    this.getProducts();
   },
   methods: {
-    showAddProductModal() {
-      this.newProduct = { name: '', price: null, quantity: null, category: '' };
+    handleSubmit() {
+      if (this.editMode) {
+        this.updateBook();
+      } else {
+        this.addBook();
+      }
+    },
+    updateBook() {
+      this.$axios
+        .put(`book/update-by-book-id/${this.newProduct.id}`, this.newProduct)
+        .then(() => {
+          console.log("Update successful");
+          this.getProducts();
+          this.closeModal();
+          this.editMode = false;
+        })
+        .catch((error) => {
+          console.error("Error updating book:", error);
+        });
+    },
+    getProducts() {
+      this.$axios
+        .get(
+          `book-store/get-book-store-products-by-store-uuid/${this.$store.getters.storeUuid}`
+        )
+        .then(async (response) => {
+          if(response.data.books){
+          this.bookQty = response.data.books.length
+            ? response.data.books.length
+            : 0;
+          }else{
+            this.bookQty = 0
+          }
+          this.books = response.data.books;
+          this.editMode = false;
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    },
+    showAddProductModal(data, update) {
+      this.newProduct = data;
       this.showModal = true;
-      this.editMode = false;
+      this.editMode = update ? true : false;
       this.selectedBook = null;
     },
     closeModal() {
       this.showModal = false;
     },
+    editBook(book) {
+      this.newProduct = { ...book };
+      this.editMode = true;
+      this.showAddProductModal(this.newProduct, 1);
+    },
     addBook() {
-      this.productInventory.push({
-        id: this.productInventory.length + 1,
-        name: this.newProduct.name,
+      let data = {
+        title: this.newProduct.title,
+        genre: this.newProduct.genre,
         price: this.newProduct.price,
         quantity: this.newProduct.quantity,
-        category: this.newProduct.category,
-      });
-      this.closeModal();
+      };
+      this.$axios
+        .post(
+          `book/add-book-by-store-uuid/${this.$store.getters.storeUuid}`,
+          data
+        )
+        .then(async () => {
+          this.closeModal();
+          this.getProducts();
+          this.editMode = false;
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
     },
-    editBook(book) {
-      this.showAddProductModal();
-      this.editMode = true;
-      this.selectedBook = book;
-      this.newProduct = { ...book };
+    deleteBook(id) {
+      this.$axios
+        .delete(`book/delete-by-book-id/${id}`)
+        .then(() => {
+          this.closeModal();
+          this.getProducts();
+        })
+        .catch((error) => {
+          console.error("Error deleting the book:", error);
+        });
     },
-    updateBook() {
-      const index = this.productInventory.findIndex(book => book.id === this.selectedBook.id);
-      if (index !== -1) {
-        this.$set(this.productInventory, index, { ...this.newProduct });
-      }
-      this.closeModal();
-    },
-    sortTable(field, order = 'asc') {
+    sortTable(field, order = "asc") {
       this.sortBy = field;
       this.sortOrder = order;
       this.sortedProductInventory = this.sortProductInventory();
@@ -320,18 +398,12 @@ export default {
     toggleSearch() {
       this.showSearch = !this.showSearch;
       if (!this.showSearch) {
-        this.search = '';
+        this.search = "";
         this.filterProducts();
       }
     },
     filterProducts() {
       this.sortedProductInventory = this.sortProductInventory();
-    },
-    deleteBook(bookId) {
-      const index = this.productInventory.findIndex(book => book.id === bookId);
-      if (index !== -1) {
-        this.productInventory.splice(index, 1);
-      }
     },
   },
   watch: {
@@ -348,9 +420,9 @@ export default {
 <style scoped>
 .dashboard-container {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1.41fr 2.3fr 1fr;
   gap: 20px;
-  height: fit-content;
+  height: 100vh;
   background-color: #f4efe9;
 }
 
@@ -394,4 +466,14 @@ export default {
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+  }
+  .right-content {
+    display: flex;
+    justify-content: center;
+  }
+}
 </style>

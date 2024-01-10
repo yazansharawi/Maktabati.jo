@@ -75,7 +75,6 @@ const store = createStore({
             if (bookstoreResponse.data && bookstoreResponse.data.success) {
               const storeUuid = bookstoreResponse.data.bookstore.bookStoreUuid;
               commit("SET_STORE_UUID", storeUuid);
-              localStorage.setItem("storeUuid", storeUuid);
               router.push({ name: "ownerDashboard" });
             } else {
               console.error(

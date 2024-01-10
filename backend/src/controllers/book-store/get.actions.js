@@ -1,5 +1,5 @@
 const models = require("../../models");
-const bookStore = models.bookStore;
+const BookStore = models.bookStore;
 const book = models.book;
 const purchase = models.purchase;
 const rentedBooks = models.rentedBooks;
@@ -10,11 +10,6 @@ async function getBookStoreByuuid(req, res) {
   try {
     const ownerUuid = req.params.uuid;
     const bookstore = await BookStore.findOne({ where: { ownerUuid } });
-
-    console.log("ownerUuid", ownerUuid);
-    console.log("bookstore", bookstore);
-
-    return;
 
     if (bookstore) {
       res.json({ success: true, bookstore });
@@ -32,7 +27,7 @@ async function getBookStoreByuuid(req, res) {
 async function getBookStoreProductsByUuid(req, res) {
   try {
     const bookStoreUuid = req.params.uuid;
-    const store = await bookStore.findOne({
+    const store = await BookStore.findOne({
       where: { bookStoreUuid: bookStoreUuid },
     });
 
@@ -65,7 +60,7 @@ async function getStoreSettingData(req, res) {
   try {
     const bookStoreUuid = req.params.uuid;
 
-    const store = await bookStore.findOne({
+    const store = await BookStore.findOne({
       where: { bookStoreUuid: bookStoreUuid },
       attributes: ["name", "email", "address", "shopNumber"],
     });
@@ -90,7 +85,7 @@ async function getBookStoreTotalRevenue(req, res) {
   try {
     const bookStoreUuid = req.params.uuid;
 
-    const store = await bookStore.findOne({ where: { bookStoreUuid } });
+    const store = await BookStore.findOne({ where: { bookStoreUuid } });
     if (!store) {
       return res
         .status(404)
@@ -130,7 +125,7 @@ async function getBookStoreRentedBooks(req, res) {
   try {
     const bookStoreUuid = req.params.uuid;
 
-    const store = await bookStore.findOne({
+    const store = await BookStore.findOne({
       where: { bookStoreUuid: bookStoreUuid },
     });
     if (!store) {
@@ -159,7 +154,7 @@ async function getBookStoreSoldBooks(req, res) {
   try {
     const bookStoreUuid = req.params.uuid;
 
-    const store = await bookStore.findOne({
+    const store = await BookStore.findOne({
       where: { bookStoreUuid: bookStoreUuid },
     });
     if (!store) {
@@ -180,7 +175,7 @@ async function getBookStoreSoldBooks(req, res) {
       },
     });
 
-    res.json({soldBooks: soldBooks });
+    res.json({ soldBooks: soldBooks });
   } catch (error) {
     console.error("Error fetching sold books:", error);
     res

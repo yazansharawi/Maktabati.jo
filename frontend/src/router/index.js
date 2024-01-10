@@ -171,11 +171,10 @@ router.beforeEach((to, from, next) => {
 
   if (requiresAuth && !isAuthenticated) {
     next("/login");
-  } else if (
-    requiresOwner &&
-    (!isAuthenticated || currentUser.type !== "owner")
-  ) {
+  } else if (requiresOwner && (!currentUser || currentUser.type !== "owner")) {
     next("/");
+  } else if (!requiresOwner && currentUser && currentUser.type === "owner") {
+    next("/ownerDashboard");
   } else {
     next();
   }

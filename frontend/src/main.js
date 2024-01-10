@@ -133,7 +133,6 @@ async function getBookStoreSoldBooks(){
     throw e;
   }
 }
-
 if (store.getters.user && store.getters.user.type === "regularUser") {
   console.log("Regular User");
   getWishListForUserByUuid();

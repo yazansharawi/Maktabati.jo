@@ -22,6 +22,9 @@ const store = createStore({
     },
   },
   actions: {
+    setBookStoreUuid({ commit }, storeUuid) {
+      commit("SET_STORE_UUID", storeUuid);
+    },
     signUpSuccess({ commit }, { user, token, userUuid }) {
       commit("SET_AUTHENTICATED", true);
       commit("SET_USER", { ...user, uuid: userUuid });
@@ -52,48 +55,63 @@ const store = createStore({
       localStorage.removeItem(TOKEN_KEY);
     },
     async login({ commit }, { email, password }) {
-      const response = await axios.post("user/login", { email, password });
-      const { user, token } = response.data;
-      console.log("response.uuid", response.data.response.uuid);
-      user.uuid = response.data.response.uuid;
-      let uuid = response.data.response.uuid;
+      try {
+        const response = await axios.post("user/login", { email, password });
+        const { token, response: loginResponse } = response.data;
+        const user = loginResponse.user;
+        const uuid = loginResponse.uuid;
 
-      commit("SET_AUTHENTICATED", true);
-      commit("SET_USER", user);
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem(TOKEN_KEY, token);
+        if (user) {
+          user.uuid = uuid;
+          commit("SET_AUTHENTICATED", true);
+          commit("SET_USER", user);
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem(TOKEN_KEY, token);
 
-      if (user.type === "owner") {
-        console.log("uuid", uuid);
-        const bookstoreResponse = await axios.get(
-          `book-store/get-book-store-by-uuid/${uuid}`
-        );
-        console.log("bookstoreResponse", bookstoreResponse);
-        if (bookstoreResponse.data && bookstoreResponse.data.success) {
-          this.$store.dispatch(
-            "setBookStoreUuid",
-            bookstoreResponse.data.bookStore.bookStoreUuid
-          );
+          if (user.type === "owner") {
+            const bookstoreResponse = await axios.get(
+              `book-store/get-book-store-by-uuid/${uuid}`
+            );
+            if (bookstoreResponse.data && bookstoreResponse.data.success) {
+              const storeUuid = bookstoreResponse.data.bookstore.bookStoreUuid;
+              commit("SET_STORE_UUID", storeUuid);
+              localStorage.setItem("storeUuid", storeUuid);
+              router.push({ name: "ownerDashboard" });
+            } else {
+              console.error(
+                "Bookstore data not found or unsuccessful response"
+              );
+            }
+          } else {
+            router.push({ name: "HomePage" });
+          }
+        } else {
+          throw new Error("User data not found in response");
         }
-      } else {
-        router.push({ name: "HomePage" });
+      } catch (error) {
+        let errorMessage = "Login failed";
+        if (error.response && error.response.status === 401) {
+          errorMessage = "Invalid credentials";
+        }
+        console.error(errorMessage, error);
+        throw new Error(errorMessage);
       }
     },
 
     checkAuthentication({ commit }) {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
+        const storeUuid = localStorage.getItem("storeUuid");
 
         if (token) {
           commit("SET_AUTHENTICATED", true);
 
           const userJson = localStorage.getItem("user");
-
           if (userJson) {
             const user = JSON.parse(userJson);
             commit("SET_USER", user);
-            if (user.storeUuid) {
-              commit("SET_STORE_UUID", user.storeUuid);
+            if (storeUuid) {
+              commit("SET_STORE_UUID", storeUuid);
             }
           } else {
             console.warn("User data in localStorage is undefined.");

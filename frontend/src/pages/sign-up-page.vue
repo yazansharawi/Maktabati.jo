@@ -1,15 +1,19 @@
 <template>
-  <div>
-    <errorDialog :model="errorDialogVisible" @update:model="errorDialogVisible = $event" />
-    <div style="display: flex; background-color: #f3f0e9">
-      <div
-        style="
-          display: flex;
-          flex: 1;
-          align-items: center;
-          flex-direction: row-reverse;
-        "
+  <v-snackbar v-model="snackbar" :timeout="6000" color="red">
+    {{ snackbarText }}
+    <template v-slot:action="{ attrs }">
+      <v-btn color="white" text v-bind="attrs" @click="snackbar = false"
+        >Close</v-btn
       >
+    </template>
+  </v-snackbar>
+  <div>
+    <errorDialog
+      :model="errorDialogVisible"
+      @update:model="errorDialogVisible = $event"
+    />
+    <div class="main">
+      <div class="main-div">
         <div
           style="
             height: auto;
@@ -32,9 +36,7 @@
           >
             Welcome To Maktabti.Jo!
           </div>
-          <div
-            style="display: flex; justify-content: center; flex-direction: row"
-          >
+          <div class="signIn">
             <v-sheet
               width="400"
               class="mx-auto"
@@ -209,7 +211,7 @@
           </div>
         </div>
       </div>
-      <div style="display: flex; flex: 1; flex-direction: row-reverse">
+      <div class="sideImage">
         <img
           src="https://ucarecdn.com/f9f58be2-9e38-4b8e-9583-d7822e68d737/"
           style="max-height: 770px"
@@ -237,7 +239,7 @@ export default {
       userDateOfBirth: null,
       userPhoneNumber: null,
       userCountry: null,
-      errorDialogVisible:false,
+      errorDialogVisible: false,
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
@@ -247,6 +249,8 @@ export default {
         (v) => !!v || "Phone number is required",
         (v) => /^\+\d+$/.test(v) || "Phone number must start with +",
       ],
+      snackbar: false,
+      snackbarText: "",
     };
   },
   computed: {
@@ -288,18 +292,20 @@ export default {
           this.$store.dispatch("signUpSuccess", {
             user: response.data.user,
             token: response.data.token,
-            userUuid:response.data.userUuid
+            userUuid: response.data.userUuid,
           });
           this.$router.push({
             name: "userOtp",
             params: { uuid: response.data.userUuid },
           });
         } else {
-          this.errorDialogVisible = true
+          this.snackbarText = "Something went wrong, please try again later";
+          this.snackbar = true;
         }
       } catch (error) {
-        this.errorDialogVisible = true
         console.error("Error during sign-up:", error);
+        this.snackbarText = "Something went wrong, please try again later";
+        this.snackbar = true;
       }
     },
   },
@@ -307,6 +313,27 @@ export default {
 </script>
 
 <style scoped>
+.signIn {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+.sideImage {
+  display: flex;
+  flex: 1;
+  flex-direction: row-reverse;
+}
+.main {
+  display: flex;
+  background-color: #f3f0e9;
+  height: 100vh;
+}
+.main-div {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  flex-direction: row-reverse;
+}
 .active-btn {
   background-color: #ae0000 !important;
 }
@@ -314,5 +341,29 @@ export default {
 .inactive-btn {
   background-color: #808080 !important;
   color: white !important;
+}
+@media (max-width: 1200px) {
+  .main {
+    display: flex;
+    background-color: #f3f0e9;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+  }
+  .sideImage {
+    display: none;
+  }
+  .signIn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: none;
+  }
+  .main-div {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>

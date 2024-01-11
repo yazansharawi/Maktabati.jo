@@ -3,7 +3,7 @@
     <div class="main-container">
       <div class="headers-container">
         <div class="list-header">Get to know The Authors</div>
-        <div class="see-all-header">See all</div>
+        <div class="see-all-header" v-if="!hideseeAll">See all</div>
       </div>
       <div class="authors-div">
         <div
@@ -64,6 +64,11 @@ export default {
       default: () => {
         return {};
       },
+    },
+    hideseeAll: {
+      type: Boolean,
+      requierd: false,
+      default: null,
     },
   },
   data() {

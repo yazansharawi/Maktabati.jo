@@ -1,15 +1,16 @@
 <template>
+  <v-snackbar v-model="snackbar" :timeout="6000" color="red">
+    {{ snackbarText }}
+    <template v-slot:action="{ attrs }">
+      <v-btn color="white" text v-bind="attrs" @click="snackbar = false"
+        >Close</v-btn
+      >
+    </template>
+  </v-snackbar>
   <div>
     <!-- <errorDialog :model="errorDialogModel" /> -->
-    <div style="display: flex; background-color: #f3f0e9">
-      <div
-        style="
-          display: flex;
-          flex: 1;
-          align-items: center;
-          flex-direction: row-reverse;
-        "
-      >
+    <div style="display: flex; background-color: #f3f0e9; height: 100vh">
+      <div class="main">
         <div
           style="
             height: auto;
@@ -101,7 +102,7 @@
           </div>
         </div>
       </div>
-      <div style="display: flex; flex: 1; flex-direction: row-reverse">
+      <div class="sideImage">
         <img
           src="https://ucarecdn.com/f9f58be2-9e38-4b8e-9583-d7822e68d737/"
           style="max-height: 770px"
@@ -119,6 +120,8 @@ export default {
       userEmail: "",
       password: "",
       visible: false,
+      snackbar: false,
+      snackbarText: "",
     };
   },
 
@@ -131,10 +134,35 @@ export default {
         });
       } catch (error) {
         console.error("Login Error:", error);
+        this.snackbarText = "Something went wrong, please try again later";
+        this.snackbar = true;
       }
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  flex-direction: row-reverse;
+}
+.sideImage {
+  display: flex;
+  flex: 1;
+  flex-direction: row-reverse;
+}
+@media (max-width: 1200px) {
+  .main {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+  }
+  .sideImage {
+    display: none;
+  }
+}
+</style>

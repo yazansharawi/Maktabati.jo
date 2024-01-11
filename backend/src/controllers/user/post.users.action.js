@@ -1,5 +1,6 @@
 const models = require("../../models");
 const User = models.User;
+const BookStore = models.bookStore;
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { internalAxios } = require("../../services/axios");
@@ -32,13 +33,25 @@ async function loginUser(req, res) {
       const user = await getUserData(email);
 
       if (user) {
+        let storeUuid = null;
+        if (user.type === 'owner') {
+          const bookstore = await BookStore.findOne({
+            where: { ownerUuid: user.uuid },
+          });
+          storeUuid = bookstore.bookStoreUuid
+        }
+
+
         const token = jwt.sign({ email }, secretKey, {
           expiresIn: "1h",
         });
+
         const response = {
           uuid: user.uuid,
           user: user,
+          storeUuid: storeUuid
         };
+
         res.json({ token, response });
       } else {
         res.status(404).json({ error: "User not found" });
@@ -51,6 +64,7 @@ async function loginUser(req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
 function generateToken(user) {
   const Key = process.env.JWT_SECRET || secretKey;
   const token = jwt.sign(
@@ -127,7 +141,6 @@ async function verifyOtpUserByUuid(req, res) {
     const enteredOtp = req.body.otp;
 
     const user = await User.findOne({ where: { uuid: userUuid } });
-
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }

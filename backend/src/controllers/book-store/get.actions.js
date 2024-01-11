@@ -27,6 +27,7 @@ async function getBookStoreByuuid(req, res) {
 async function getBookStoreProductsByUuid(req, res) {
   try {
     const bookStoreUuid = req.params.uuid;
+    console.log("hhhhhhhhh",bookStoreUuid)
     const store = await BookStore.findOne({
       where: { bookStoreUuid: bookStoreUuid },
     });

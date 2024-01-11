@@ -140,7 +140,6 @@ if (store.getters.user && store.getters.user.type === "regularUser") {
   getBooksRentedPeruserByUuid();
   getShoppingCartPerUserByUuid();
 } else if (store.getters.user && store.getters.user.type === "owner") {
-  console.log("store.getters.user",store.getters)
   console.log("Owner");
   getBookStoreTotalRevenue();
   getBookRentedAtTheMomen();

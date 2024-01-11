@@ -33,7 +33,6 @@ const store = createStore({
     },
 
     signUpSuccessBookStore({ commit, state }, { storeUuid, token }) {
-      console.log("store", storeUuid);
       const updatedUser = { ...state.user, storeUuid };
       commit("SET_STORE_UUID", storeUuid);
       commit("SET_USER", updatedUser);
@@ -67,7 +66,6 @@ const store = createStore({
           commit("SET_USER", user);
           localStorage.setItem("user", JSON.stringify(user));
           localStorage.setItem(TOKEN_KEY, token);
-
           if (user.type === "owner") {
             const bookstoreResponse = await axios.get(
               `book-store/get-book-store-by-uuid/${uuid}`
@@ -75,6 +73,7 @@ const store = createStore({
             if (bookstoreResponse.data && bookstoreResponse.data.success) {
               const storeUuid = bookstoreResponse.data.bookstore.bookStoreUuid;
               commit("SET_STORE_UUID", storeUuid);
+              localStorage.setItem("storeUuid", storeUuid);
               router.push({ name: "ownerDashboard" });
             } else {
               console.error(
@@ -96,7 +95,6 @@ const store = createStore({
         throw new Error(errorMessage);
       }
     },
-
     checkAuthentication({ commit }) {
       try {
         const token = localStorage.getItem(TOKEN_KEY);

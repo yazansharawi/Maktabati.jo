@@ -239,10 +239,10 @@
                 </router-link>
               </div>
               <div style="display: flex">
-                <div style="display: flex">
+                <div style="display: flex; gap: 15px">
                   <div
                     class="mr-5 text-truncate"
-                    style="font-size: 15px; max-width: 100px"
+                    style="font-size: 15px; max-width: 100px; width: 110px"
                   >
                     {{ book.title }}
                   </div>

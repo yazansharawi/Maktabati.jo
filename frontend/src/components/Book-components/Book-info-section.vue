@@ -28,7 +28,7 @@
               margin-top: 15px;
             "
           >
-            - {{ authorName }}
+            {{ authorName }}
           </div>
         </div>
         <div style="flex: 1" class="bookInfo">

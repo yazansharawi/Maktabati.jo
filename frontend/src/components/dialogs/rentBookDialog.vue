@@ -146,6 +146,7 @@ export default {
         )
         .then(async () => {
           this.dialog = false;
+          this.$emit("Accepted", true);
         })
         .catch((error) => {
           console.error("Error fetching data:", error);

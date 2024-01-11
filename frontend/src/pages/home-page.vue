@@ -88,6 +88,18 @@
         <v-progress-circular indeterminate></v-progress-circular>
       </div>
 
+      <div
+        v-else-if="this.$userLastFiveSearches.length === 0"
+        style="
+          display: flex;
+          justify-content: center;
+          font-size: 40px;
+          align-items: center;
+          height: 10vh;
+        "
+      >
+        No Data
+      </div>
       <BookLists
         v-else
         :background-color="'white'"
@@ -96,7 +108,7 @@
         :books="this.$userLastFiveSearches.books"
       />
 
-      <AboutAuthors :authors="authors" />
+      <AboutAuthors :authors="authors" :hideseeAll="true" />
 
       <Footer />
     </div>

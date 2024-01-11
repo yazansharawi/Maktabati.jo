@@ -26,13 +26,13 @@
               style="text-decoration: none; color: inherit"
             >
               <div class="book-cover-container">
-                <div v-if="isOffer" class="discount-offer" style="width: 200px">
+                <div v-if="isOffer" class="discount-offer" style="width: 210px">
                   15% off
                 </div>
                 <img
                   :src="book.image"
                   alt="Book Image"
-                  style="width: 200px; height: 300px; max-height: 400px"
+                  style="width: 210px; height: 300px; max-height: 400px"
                 />
               </div>
             </router-link>
@@ -199,7 +199,7 @@ export default {
 
 <style scoped>
 .main-container {
-  height: 550px;
+  height: 570px;
   background-color: white;
 }
 .headers-container {
@@ -237,8 +237,9 @@ export default {
   align-items: center;
 }
 .book-name-container {
+  padding-left: 5px;
   padding-top: 5px;
-  width: 220px;
+  width: 213px;
   font-family: "Times New Roman";
   font-style: normal;
   font-weight: 700;
@@ -250,6 +251,7 @@ export default {
   justify-content: space-between;
 }
 .book-author-container {
+  padding-left: 5px;
   font-family: "Times New Roman";
   font-style: normal;
   font-weight: 400;
@@ -265,6 +267,15 @@ export default {
   flex-wrap: nowrap;
   overflow-x: auto;
   margin: 0 -10px;
+}
+
+.books-container::-webkit-scrollbar {
+  display: none;
+}
+
+.books-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .add-btn {
   background: #ae0000;

@@ -4,11 +4,13 @@
       :model="DialogVisible"
       @update:model="(DialogVisible = $event), (this.eventDialog = true)"
       :bookInfo="this.book"
+      @Accepted="this.Accepted = true"
     />
     <eventDialog
       :model="eventDialog"
       @update:model="eventDialog = $event"
       :eventType="status"
+      :Accepted="this.Accepted"
     />
     <div v-if="!this.book">
       <v-skeleton-loader
@@ -188,6 +190,7 @@ export default {
       addedToShopCart: false,
       status: null,
       eventDialog: false,
+      Accepted:false
     };
   },
   mounted() {
@@ -203,7 +206,6 @@ export default {
   },
   methods: {
     updateRentalStatus() {
-      console.log("userRentedBooks",this.$userRentedBooks)
       if (this.book && Array.isArray(this.$userRentedBooks)) {
         this.isRented = this.$userRentedBooks.includes(this.book.id);
       }

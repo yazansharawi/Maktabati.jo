@@ -5,7 +5,12 @@
         <v-card-text v-if="eventType == 'addedToCart'"
           >added to cart
         </v-card-text>
-        <v-card-text v-else-if="eventType == 'rented'"> rented </v-card-text>
+        <v-card-text
+          v-else-if="eventType == 'rented'"
+          style="font-size: 30px; display: flex; justify-content: center"
+        >
+          Rented
+        </v-card-text>
         <v-card-text v-else> error </v-card-text>
         <v-card-actions>
           <v-btn color="primary" block @click="closeDialog">Close Dialog</v-btn>
@@ -25,6 +30,11 @@ export default {
       required: false,
       default: false,
     },
+    Accepted: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     typeOfEvent: {
       type: String,
       required: false,
@@ -38,9 +48,6 @@ export default {
   },
   computed: {
     dialog: {
-      get() {
-        return this.model;
-      },
       set(value) {
         this.$emit("update:model", value);
       },

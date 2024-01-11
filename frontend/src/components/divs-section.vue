@@ -55,10 +55,15 @@
             >
               <div>
                 <div v-if="sectionName === 'Reviews'">
-                  <img
-                    style="height: 55px; border-radius: 40px"
-                    :src="item.User.image"
-                  />
+                  <v-avatar size="large">
+                    <v-icon
+                      size="3rem"
+                      color="#ae0000"
+                      style="padding-top: 15px"
+                    >
+                      mdi-account
+                    </v-icon></v-avatar
+                  >
                 </div>
                 <div v-else>
                   <v-icon size="4.5rem" color="#000000" style="right: 1px">

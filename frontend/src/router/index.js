@@ -70,7 +70,6 @@ const routes = [
     component: () => import("@/pages/otp-page.vue"),
     meta: {
       title: "User Verification",
-      requiresAuth: true,
     },
     props: true,
   },
@@ -98,7 +97,6 @@ const routes = [
     meta: {
       title: "OrdersPage",
       requiresAuth: true,
-      requiresOwner: true,
     },
   },
   {
@@ -108,7 +106,6 @@ const routes = [
     meta: {
       title: "Owner Dashboard",
       requiresAuth: true,
-      requiresOwner: true,
     },
   },
   {
@@ -118,7 +115,6 @@ const routes = [
     meta: {
       title: "Owner Product Page",
       requiresAuth: true,
-      requiresOwner: true,
     },
   },
   {
@@ -137,7 +133,6 @@ const routes = [
     meta: {
       title: "RegisterThe Owner Page",
       requiresAuth: true,
-      requiresOwner: true,
     },
   },
   {
@@ -147,7 +142,6 @@ const routes = [
     meta: {
       title: "Book Store Setting",
       requiresAuth: true,
-      requiresOwner: true,
     },
   },
 ];
@@ -165,16 +159,9 @@ router.afterEach((to) => {
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  const requiresOwner = to.matched.some((record) => record.meta.requiresOwner);
-  const currentUser = store.getters.user;
-  const isAuthenticated = store.getters.isAuthenticated;
 
-  if (requiresAuth && !isAuthenticated) {
-    next("/login");
-  } else if (requiresOwner && (!currentUser || currentUser.type !== "owner")) {
-    next("/");
-  } else if (!requiresOwner && currentUser && currentUser.type === "owner") {
-    next("/ownerDashboard");
+  if (requiresAuth && !store.getters.isAuthenticated) {
+    next('/login');
   } else {
     next();
   }
